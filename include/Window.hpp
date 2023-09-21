@@ -2,7 +2,6 @@
 #define WINDOW_HPP
 
 #include "scop.hpp"
-#include <GL
 #define MAX_BUFFER
 
 template <class T = void>
@@ -15,7 +14,7 @@ public:
     int height;
     int width;
     std::string title;
-    IVector2 position;
+    Vector2<int> position;
 
     int fpsLimit;
     std::map<int, callbackFunction> keyHandle;
@@ -28,7 +27,7 @@ public:
     GLFWwindow *window;
     GLFWmonitor *monitor;
 
-    Window() : running(false), resizable(true), height(500), width(500), title("My super window"), fpsLimit(60), updateFunction(nullptr), data(nullptr)
+    Window() : running(false), resizable(true), height(500), width(500), title("My super window"), fpsLimit(60), updateFunction(nullptr), data(nullptr), window(nullptr), monitor(nullptr)
     {
         glfwWindowHint(GLFW_SAMPLES, 4);
         glfwWindowHint(GLFW_RESIZABLE, resizable == true ? GLFW_TRUE : GLFW_FALSE);

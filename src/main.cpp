@@ -3,15 +3,20 @@
 #define WINDOW_HEIGHT 150
 #define WINDOW_WIDTH 150
 
+#define VERTEX_SHADER_FILEPATH "./vertex.shader"
+#define FRAGMENT_SHADER_FILEPATH "./fragment.shader"
+
 void onError(std::string str) {
     std::cerr << str << "\n";
     exit(1);
 }
 
-void onUpdate(Window<> *win, void *data) {
+void onUpdate(Window<int> *win, int *data) {
     static int len = 0;
     (void)win;
     (void)data;
+
+    std::cout << "onUpdate : " << *data << "\n";
     
     glBegin(GL_TRIANGLES);
     glVertex2f(-0.5f, -0.5f);
@@ -35,10 +40,39 @@ int main(int ac, char **av) {
     }
     const ObjParser parser(av[1]);
 
-    Window<void> window;
+    Window<int> window;
 
-    window.create();
-    window.updateFunction = onUpdate;
+    int success;
+    char logs[512];
 
-    window.start();
+    try
+    {
+        Shader vertex(VERTEX_SHADER, VERTEX_SHADER_FILEPATH);
+        std::cout << "coucou\n";
+        Shader fragment(FRAGMENT_SHADER, FRAGMENT_SHADER_FILEPATH);
+
+        int programId = glCreateProgram();
+        glAttachShader(programId, vertex.getId());
+        glAttachShader(programId, fragment.getId());
+        glLinkProgram(programId);
+
+        glGetProgramiv(programId, GL_LINK_STATUS, &success);
+        if (!success) {
+            glGetProgramInfoLog(programId, sizeof(logs), NULL, logs);
+            throw logs;
+        }
+        window.data = &programId;
+        std::cout << "Set data = " << programId << "\n";
+        
+        window.create();
+        window.updateFunction = onUpdate;
+
+        window.start();
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    
+
 }
