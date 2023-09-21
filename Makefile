@@ -1,4 +1,4 @@
-SRC = src/main.cpp src/class/ObjParser.cpp src/utils.cpp src/class/Vertice.cpp src/class/Face.cpp src/class/Shader.cpp
+SRC = src/main.cpp src/class/ObjParser.cpp src/utils.cpp src/class/Vertice.cpp src/class/Face.cpp src/class/Shader.cpp src/shaders.cpp src/error.cpp
 
 OBJS = $(SRC:.cpp=.o)
 

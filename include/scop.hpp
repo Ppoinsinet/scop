@@ -13,9 +13,11 @@
 #include <GLFW/glfw3.h>
 #include <GL/gl.h>
 
-#include "Vertice.hpp"
-#include "Face.hpp"
 #include "Vector2.hpp"
+#include "Vector3.hpp"
+#include "Vertice.hpp"
+
+#include "Face.hpp"
 #include "ObjParser.hpp"
 #include "Window.hpp"
 #include "Shader.hpp"

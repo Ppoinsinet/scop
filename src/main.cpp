@@ -3,34 +3,97 @@
 #define WINDOW_HEIGHT 150
 #define WINDOW_WIDTH 150
 
-#define VERTEX_SHADER_FILEPATH "./vertex.shader"
-#define FRAGMENT_SHADER_FILEPATH "./fragment.shader"
+#include <math.h>
 
-void onError(std::string str) {
-    std::cerr << str << "\n";
-    exit(1);
+Vector3<GLfloat> position(0.0, 0.0, 3.5);
+
+void drawObjFaces(ObjParser *data) {
+    std::vector<Vertice> vertices;
+
+    for (size_t i = 0; i < data->faces.size(); i++) {
+        for (int j = 0; j < 3; j++) {
+            vertices.push_back(data->vertices[data->faces[i].verticesIndex[j]]);
+            // std::cout << "x = " << data->vertices[data->faces[i].verticesIndex[j]].x << " y = " << data->vertices[data->faces[i].verticesIndex[j]].y << " z = " << data->vertices[data->faces[i].verticesIndex[j]].z << "\n";
+        }
+    }
+
+    unsigned int VAO = 0;
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    unsigned int VBO;
+    glGenBuffers(1, &VBO);
+
+    // Position VBO
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer((GLuint)0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(0);
+
+    glBindVertexArray(VAO);
+
+    glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 3);
+
+    glBindVertexArray(0);
 }
 
-void onUpdate(Window<int> *win, int *data) {
-    static int len = 0;
+void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
     (void)win;
     (void)data;
 
-    std::cout << "onUpdate : " << *data << "\n";
+    float verticalFOV = 90;
+
+    std::vector<Vertice> vertices(data->vertices);
+
+    for (size_t i = 0; i < 6; i++) {
+        vertices[i].x += position.x;
+        vertices[i].y += position.y;
+        vertices[i].z += position.z;
+    }
+
+    for (size_t i = 0; i < 6; i++) {
+        vertices[i].x = vertices[i].x / (vertices[i].z * tan(verticalFOV / 2));
+        vertices[i].y = vertices[i].y / (vertices[i].z * tan(verticalFOV / 2));
+        vertices[i].z = 0;
+    }
+
+    unsigned int VBO = 0;
+    glGenBuffers(1, &VBO);
+
+    // Position VBO
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertice) , vertices.data(), GL_STATIC_DRAW);
     
-    glBegin(GL_TRIANGLES);
-    glVertex2f(-0.5f, -0.5f);
-    glVertex2f(-0.0f, 0.5f);
-    glVertex2f(0.5f, -0.5f);
+    unsigned int IBO = 0;
+    std::vector<unsigned int> indices;
 
-    glEnd();
+    for (size_t i = 0; i < data->faces.size(); i++)
+        for (int j = 0; j < 3; j++) {
+            indices.push_back(static_cast<unsigned int>(data->faces[i].verticesIndex[j]));
+        }
 
-    glFlush();
+    glGenBuffers(1, &IBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
+    // draw
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
+    glDrawElements(GL_TRIANGLES, vertices.size() * 3, GL_UNSIGNED_INT, 0);
 
-    std::cout << "update " << len++ << "\n";
+    glDisableVertexAttribArray(0);
+}
+
+void onPress(Window<ObjParser *> *win, ObjParser *data) {
+    (void)win;
+    (void)data;
+    position.z -= 0.2;
+    position.x += 0.2;
+    std::cout << "press\n";
 }
 
 int main(int ac, char **av) {
@@ -38,32 +101,20 @@ int main(int ac, char **av) {
         std::cerr << "Incorrect input\n";
         exit(1);
     }
-    const ObjParser parser(av[1]);
+    ObjParser parser(av[1]);
 
-    Window<int> window;
-
-    int success;
-    char logs[512];
+    Window<ObjParser *> window;
 
     try
     {
-        Shader vertex(VERTEX_SHADER, VERTEX_SHADER_FILEPATH);
-        std::cout << "coucou\n";
-        Shader fragment(FRAGMENT_SHADER, FRAGMENT_SHADER_FILEPATH);
-
-        int programId = glCreateProgram();
-        glAttachShader(programId, vertex.getId());
-        glAttachShader(programId, fragment.getId());
-        glLinkProgram(programId);
-
-        glGetProgramiv(programId, GL_LINK_STATUS, &success);
-        if (!success) {
-            glGetProgramInfoLog(programId, sizeof(logs), NULL, logs);
-            throw logs;
-        }
-        window.data = &programId;
-        std::cout << "Set data = " << programId << "\n";
+        // useShaders(&window);
         
+        glEnable(GL_CULL_FACE);
+        glFrontFace(GL_CW);
+        glCullFace(GL_BACK);
+
+        window.data = &parser;
+        window.keyHandle[GLFW_KEY_Q] = onPress;
         window.create();
         window.updateFunction = onUpdate;
 

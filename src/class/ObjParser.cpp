@@ -14,14 +14,16 @@ void ObjParser::addFace(std::vector<std::string> line, int smoothingGroup) {
     if (line.size() < 4)
         throw "Incorrect input for face";
 
-    faces.push_back(Face(std::stoi(line[1]), std::stoi(line[2]), std::stoi(line[3]), smoothingGroup));
+    // todo: make it unsigned int or check vertices array bounds
+    faces.push_back(Face(std::stoi(line[1]) - 1, std::stoi(line[2]) - 1, std::stoi(line[3]) - 1, smoothingGroup));
 }
 
 void ObjParser::addVertice(std::vector<std::string> line) {
     if (line.size() < 4)
         throw "Incorrect input for vertice";
-    
-    vertices.push_back(Vertice(std::stof(line[1]), std::stof(line[2]), std::stof(line[3])));
+
+    Vertice tmp(std::stof(line[1]), std::stof(line[2]), std::stof(line[3]));
+    vertices.push_back(tmp);
 }
 
 ObjParser::ObjParser(std::string filePath) {

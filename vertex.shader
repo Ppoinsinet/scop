@@ -1,10 +1,9 @@
-#version 330 core
-layout (location = 0) in vec3 aPos; // La variable position a l'attribut de position 0
-  
-out vec4 vertexColor;             // Nous définirons la couleur dans cette variable
+#version 150 core
+in vec3 in_Position;
+in vec3 in_Color;
+out vec3 pass_Color;
 
-void main()
-{
-    gl_Position = vec4(aPos, 1.0); // un vec3 est utilisé pour construire un vec4
-    vertexColor = vec4(0.5, 0.0, 0.0, 1.0); // Couleur rouge foncé
+void main(void) {
+	gl_Position = vec4(in_Position, 1.0);
+	pass_Color = in_Color;?
 }
