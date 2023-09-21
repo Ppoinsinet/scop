@@ -7,6 +7,34 @@
 
 Vector3<GLfloat> position(0.0, 0.0, 3.5);
 
+void verticesOperations(std::vector<Vertice> &vertices) {
+    float verticalFOV = 90;
+
+    Matrix<4, float> rotation;
+    const float scale = 0.02f;
+
+    float rota[16] = {
+        cosf(scale), 0.0f, -sinf(scale), 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        sinf(scale), 0.0f, cosf(scale), 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+
+    rotation.setData(rota);
+
+    for (size_t i = 0; i < vertices.size(); i++) {
+        vertices[i].x += position.x;
+        vertices[i].y += position.y;
+        vertices[i].z += position.z;
+    }
+
+    for (size_t i = 0; i < vertices.size(); i++) {
+        vertices[i].x = vertices[i].x / (vertices[i].z * tan(verticalFOV / 2));
+        vertices[i].y = vertices[i].y / (vertices[i].z * tan(verticalFOV / 2));
+        vertices[i].z = 0;
+    }
+}
+
 void drawObjFaces(ObjParser *data) {
     std::vector<Vertice> vertices;
 
@@ -41,21 +69,19 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
     (void)win;
     (void)data;
 
-    float verticalFOV = 90;
+    // std::vector<Vertice> vertices(data->vertices);
+    std::vector<Vertice> vertices;
 
-    std::vector<Vertice> vertices(data->vertices);
+    vertices.push_back(Vertice(0.5f, 0.5f, 0.5f));
+    vertices.push_back(Vertice(-0.5f, 0.5f, -0.5f));
+    vertices.push_back(Vertice(-0.5f, 0.5f, 0.5f));
+    vertices.push_back(Vertice(0.5f, -0.5f, -0.5f));
+    vertices.push_back(Vertice(-0.5f, -0.5f, -0.5f));
+    vertices.push_back(Vertice(0.5f, 0.5f, -0.5f));
+    vertices.push_back(Vertice(0.5f, -0.5f, 0.5f));
+    vertices.push_back(Vertice(-0.5f, -0.5f, 0.5f));
 
-    for (size_t i = 0; i < 6; i++) {
-        vertices[i].x += position.x;
-        vertices[i].y += position.y;
-        vertices[i].z += position.z;
-    }
-
-    for (size_t i = 0; i < 6; i++) {
-        vertices[i].x = vertices[i].x / (vertices[i].z * tan(verticalFOV / 2));
-        vertices[i].y = vertices[i].y / (vertices[i].z * tan(verticalFOV / 2));
-        vertices[i].z = 0;
-    }
+    verticesOperations(vertices);
 
     unsigned int VBO = 0;
     glGenBuffers(1, &VBO);
@@ -67,10 +93,22 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
     unsigned int IBO = 0;
     std::vector<unsigned int> indices;
 
-    for (size_t i = 0; i < data->faces.size(); i++)
-        for (int j = 0; j < 3; j++) {
-            indices.push_back(static_cast<unsigned int>(data->faces[i].verticesIndex[j]));
-        }
+    indices.push_back(0); indices.push_back(1); indices.push_back(2);
+                              indices.push_back(1); indices.push_back(3); indices.push_back(4);
+                              indices.push_back(5); indices.push_back(6); indices.push_back(3);
+                              indices.push_back(7); indices.push_back(3); indices.push_back(6);
+                              indices.push_back(2); indices.push_back(4); indices.push_back(7);
+                              indices.push_back(0); indices.push_back(7); indices.push_back(6);
+                              indices.push_back(0); indices.push_back(5); indices.push_back(1);
+                              indices.push_back(1); indices.push_back(5); indices.push_back(3);
+                              indices.push_back(5); indices.push_back(0); indices.push_back(6);
+                              indices.push_back(7); indices.push_back(4); indices.push_back(3);
+                              indices.push_back(2); indices.push_back(1); indices.push_back(4);
+                              indices.push_back(0); indices.push_back(2); indices.push_back(7);
+    // for (size_t i = 0; i < data->faces.size(); i++)
+    //     for (int j = 0; j < 3; j++) {
+    //         indices.push_back(static_cast<unsigned int>(data->faces[i].verticesIndex[j]));
+    //     }
 
     glGenBuffers(1, &IBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
@@ -107,11 +145,13 @@ int main(int ac, char **av) {
 
     try
     {
+        // youtube video : https://www.youtube.com/watch?v=LhQ85bPCAJ8
+
         // useShaders(&window);
         
-        glEnable(GL_CULL_FACE);
-        glFrontFace(GL_CW);
-        glCullFace(GL_BACK);
+        // glEnable(GL_CULL_FACE);
+        // glFrontFace(GL_CW);
+        // glCullFace(GL_BACK);
 
         window.data = &parser;
         window.keyHandle[GLFW_KEY_Q] = onPress;

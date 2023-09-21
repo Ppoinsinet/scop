@@ -15,6 +15,7 @@
 
 #include "Vector2.hpp"
 #include "Vector3.hpp"
+#include "Matrix.hpp"
 #include "Vertice.hpp"
 
 #include "Face.hpp"
