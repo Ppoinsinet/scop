@@ -10,8 +10,9 @@ public:
     T data[N * M];
 
     Matrix() {
-        for (unsigned int i = 0; i < N * M; i++)
-            data[i] = 0;
+        for (unsigned int i = 0; i < N * M; i++) {
+            data[i] = T();
+        }
     }
 
     Matrix(const Matrix<N, M, T> &ref) {
@@ -22,6 +23,18 @@ public:
     Matrix(const T tab[N * M]) {
         for (unsigned int i = 0; i < N * M; i++)
             data[i] = tab[i];
+    }
+
+    static typename std::enable_if<std::is_arithmetic<T>::value, Matrix<N, N, T> >::type Identity() {
+        unsigned int step = 0;
+        Matrix<N, N, T> r;
+        for (unsigned int i = 0; i < M * M; i++) {
+            if (i == step) {
+                r.data[i] = 1;
+                step += 1 + M;
+            }
+        }
+        return r;
     }
 
     Matrix<N, M, T> &operator=(const T tab[N * M]) {
@@ -36,12 +49,53 @@ public:
         return *this;
     }
 
+    Matrix<N, M, T> operator+(const Matrix<N, M, T> &ref) const {
+        Matrix<N, M, T> r;
+
+        for (unsigned int i = 0; i < N * M; i++)
+            r.data[i] = data[i] + ref.data[i];
+        return r;
+    }
+
+    Matrix<N, M, T> operator-(const Matrix<N, M, T> &ref) const {
+        Matrix<N, M, T> r;
+
+        for (unsigned int i = 0; i < N * M; i++)
+            r.data[i] = data[i] - ref.data[i];
+        return r;
+    }
+
+    Matrix<N, M, T> &operator+=(const Matrix<N, M, T> &ref) {
+        for (unsigned int i = 0; i < N * M; i++)
+            data[i] += ref.data[i];
+        return *this;
+    }
+
+    Matrix<M, N, T> transpose() {
+        Matrix<M, N, T> r;
+
+        for (size_t x = 0; x < N; x++) {
+
+            for (size_t y = 0; y < M; y++) {
+
+                r.data[(x * M) + y] = data[x + (y * M)];
+            }
+        }
+        return r;
+    }
+
+    Matrix<N, M, T> &operator-=(const Matrix<N, M, T> &ref) {
+        for (unsigned int i = 0; i < N * M; i++)
+            data[i] -= ref.data[i];
+        return *this;
+    }
+
     template <unsigned int A>
-    static T getSum(const Matrix<1, A, T> &a, const Matrix<A, 1, T> &b) {
+    static T getSum(const Matrix<1, A, T> &row, const Matrix<A, 1, T> &col) {
         T r = T();
 
         for (unsigned int i = 0; i < A; i++)
-            r += a.data[i] * b.data[i];
+            r += row.data[i] * col.data[i];
         return r;
     }
     
@@ -69,7 +123,7 @@ public:
         
         for (unsigned int x = 0; x < X; x++) {
         
-            for (unsigned int y = 0; y < M; y++) {
+            for (unsigned int y = 0; y < N; y++) {
 
                 r.data[(y * X) + x] = getSum(getRow(y), ref.getColumn(x));
             }

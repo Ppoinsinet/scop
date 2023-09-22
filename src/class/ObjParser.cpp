@@ -22,7 +22,7 @@ void ObjParser::addVertice(std::vector<std::string> line) {
     if (line.size() < 4)
         throw "Incorrect input for vertice";
 
-    Vertice tmp(std::stof(line[1]), std::stof(line[2]), std::stof(line[3]));
+    Vector3<GLfloat> tmp(std::stof(line[1]), std::stof(line[2]), std::stof(line[3]));
     vertices.push_back(tmp);
 }
 

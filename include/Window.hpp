@@ -10,8 +10,9 @@ private:
     GLFWwindow *window;
     GLFWmonitor *monitor;
 
-    static void defaultOnEscape(Window *a, T data) {
+    static void defaultOnEscape(Window *a, T data, int key) {
         (void)data;
+        (void)key;
         a->running = false;
     }
 
@@ -20,22 +21,23 @@ private:
     }
 
     void clear() {
-        glClearColor(0.0, 0.0, 1.0, 0.0);
+        glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
     void input() {
         glfwPollEvents();
 
-        typename std::map<int, callbackFunction>::iterator it = keyHandle.begin();
+        typename std::map<int, keyCallbackFunction>::iterator it = keyHandle.begin();
         for (; it != keyHandle.end(); it++) {
             if (glfwGetKey(window, it->first) == GLFW_PRESS && it->second != nullptr)
-                it->second(this, data);
+                it->second(this, data, it->first);
         }
     }
 
 public:
     typedef void(*callbackFunction)(Window*, T);
+    typedef void(*keyCallbackFunction)(Window*, T, int);
 
     bool running;
     bool resizable;
@@ -45,13 +47,15 @@ public:
     Vector2<int> position;
 
     int fpsLimit;
-    std::map<int, callbackFunction> keyHandle;
+    std::map<int, keyCallbackFunction> keyHandle;
 
     callbackFunction updateFunction;
+    callbackFunction initFunction;
+    callbackFunction closeFunction;
 
     T data;
 
-    Window() : window(nullptr), monitor(nullptr), running(false), resizable(true), height(500), width(500), title("My super window"), fpsLimit(60), updateFunction(nullptr), data(nullptr)
+    Window() : window(nullptr), monitor(nullptr), running(false), resizable(true), height(500), width(500), title("My super window"), fpsLimit(60), updateFunction(nullptr), initFunction(nullptr), closeFunction(nullptr), data(nullptr)
     {
         glfwWindowHint(GLFW_SAMPLES, 4);
         glfwWindowHint(GLFW_RESIZABLE, resizable == true ? GLFW_TRUE : GLFW_FALSE);
@@ -83,12 +87,15 @@ public:
         running = true;
         double lastTime = 0.0;
 
+        if (initFunction != nullptr)
+            initFunction(this, data);
+
         while (running && !glfwWindowShouldClose(window)) {
-            clear();
 
             double time = glfwGetTime();
             
             if ((time - lastTime) >= 1/static_cast<double>(fpsLimit)) {
+                clear();
                 if (updateFunction)
                     updateFunction(this, data);
 
@@ -99,6 +106,9 @@ public:
                 draw();
             }
         }
+
+        if (closeFunction != nullptr)
+            closeFunction(this, data);
     }
 };
 

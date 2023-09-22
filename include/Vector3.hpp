@@ -27,6 +27,10 @@ public:
         Matrix<3, 1, T>::data[2] = ref.data[2];
     }
 
+    Matrix<3, 1, T> getMatrice() {
+        return Matrix<3, 1, T>(Matrix<3, 1, T>::data);
+    }
+
     T &x() {return Matrix<3, 1, T>::data[0];}
     T &y() {return Matrix<3, 1, T>::data[1];}
     T &z() {return Matrix<3, 1, T>::data[2];}

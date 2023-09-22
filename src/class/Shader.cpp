@@ -11,9 +11,9 @@ Shader::Shader(const ShaderType type, const std::string &filePath)
 {
     std::stringstream stream;
     int success = 0;
-    // char logs[512];
+    char logs[512];
     
-    // for (size_t i = 0; i < sizeof(logs); i++) logs[i] = 0;
+    for (size_t i = 0; i < sizeof(logs); i++) logs[i] = 0;
 
     file.open(filePath);
     stream << file.rdbuf();
@@ -26,15 +26,13 @@ Shader::Shader(const ShaderType type, const std::string &filePath)
     
     glShaderSource(id, 1, &codePointer, NULL);
     glCompileShader(id);
-    // int err = glGetError();
-    std::cerr << "Err : " << codePointer << "\n";
 
     glGetShaderiv(id, GL_COMPILE_STATUS, &success);
-    // if (!success) {
-    //     std::cout << "mince : " << logs << " avec " << id << "\n";
-    //     glGetShaderInfoLog(id, sizeof(logs), NULL, logs);
-    //     throw std::runtime_error("ERROR: (" + getType() + " COMPILATION) :\n");
-    // }
+    if (!success) {
+        std::cout << "mince : " << logs << " avec " << id << "\n";
+        glGetShaderInfoLog(id, sizeof(logs), NULL, logs);
+        throw std::runtime_error("ERROR: (" + getType() + " COMPILATION) :\n");
+    }
 }
 
 

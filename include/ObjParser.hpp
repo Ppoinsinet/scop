@@ -2,7 +2,7 @@
 
 class ObjParser {
     public:
-        std::vector<Vertice> vertices;
+        std::vector<Vector3<GLfloat>> vertices;
         std::vector<Face> faces;
 
         void addVertice(std::vector<std::string> line);
