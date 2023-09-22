@@ -6,33 +6,35 @@
 #include <math.h>
 
 Vector3<GLfloat> position(0.0, 0.0, 3.5);
+float scale = 0.0f;
 
-void verticesOperations(std::vector<Vertice> &vertices) {
+std::vector<Vertice> verticesOperations(std::vector<Vertice> &vertices) {
     float verticalFOV = 90;
 
-    Matrix<4, float> rotation;
-    const float scale = 0.02f;
+    Matrix<3, 3, float> rotation;
 
-    float rota[16] = {
-        cosf(scale), 0.0f, -sinf(scale), 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        sinf(scale), 0.0f, cosf(scale), 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
+    rotation = (float[9]){
+        cosf(scale), 0.0f, -sinf(scale),
+        0.0f, 1.0f, 0.0f,
+        sinf(scale), 0.0f, cosf(scale)
     };
 
-    rotation.setData(rota);
 
     for (size_t i = 0; i < vertices.size(); i++) {
-        vertices[i].x += position.x;
-        vertices[i].y += position.y;
-        vertices[i].z += position.z;
+        auto t = rotation * vertices[i];
+        vertices[i].x() = t.data[0];
+        vertices[i].y() = t.data[1];
+        vertices[i].z() = t.data[2];
     }
 
-    for (size_t i = 0; i < vertices.size(); i++) {
-        vertices[i].x = vertices[i].x / (vertices[i].z * tan(verticalFOV / 2));
-        vertices[i].y = vertices[i].y / (vertices[i].z * tan(verticalFOV / 2));
-        vertices[i].z = 0;
+    auto projections(vertices);
+
+    for (size_t i = 0; i < projections.size(); i++) {
+        projections[i].x() = projections[i].x() / (projections[i].z() * tan(verticalFOV / 2));
+        projections[i].y() = projections[i].y() / (projections[i].z() * tan(verticalFOV / 2));
+        projections[i].z() = 0;
     }
+    return projections;
 }
 
 void drawObjFaces(ObjParser *data) {
@@ -72,39 +74,39 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
     // std::vector<Vertice> vertices(data->vertices);
     std::vector<Vertice> vertices;
 
-    vertices.push_back(Vertice(0.5f, 0.5f, 0.5f));
-    vertices.push_back(Vertice(-0.5f, 0.5f, -0.5f));
-    vertices.push_back(Vertice(-0.5f, 0.5f, 0.5f));
-    vertices.push_back(Vertice(0.5f, -0.5f, -0.5f));
-    vertices.push_back(Vertice(-0.5f, -0.5f, -0.5f));
-    vertices.push_back(Vertice(0.5f, 0.5f, -0.5f));
-    vertices.push_back(Vertice(0.5f, -0.5f, 0.5f));
-    vertices.push_back(Vertice(-0.5f, -0.5f, 0.5f));
+    vertices.push_back(Vertice(0.5f, 0.5f, 1.5f));
+    vertices.push_back(Vertice(-0.5f, 0.5f, -1.5f));
+    vertices.push_back(Vertice(-0.5f, 0.5f, 1.5f));
+    vertices.push_back(Vertice(0.5f, -0.5f, -1.5f));
+    vertices.push_back(Vertice(-0.5f, -0.5f, -1.5f));
+    vertices.push_back(Vertice(0.5f, 0.5f, -1.5f));
+    vertices.push_back(Vertice(0.5f, -0.5f, 1.5f));
+    vertices.push_back(Vertice(-0.5f, -0.5f, 1.5f));
 
-    verticesOperations(vertices);
+    auto projections = verticesOperations(vertices);
 
     unsigned int VBO = 0;
     glGenBuffers(1, &VBO);
 
     // Position VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertice) , vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, projections.size() * sizeof(Vertice) , projections.data(), GL_STATIC_DRAW);
     
     unsigned int IBO = 0;
     std::vector<unsigned int> indices;
 
     indices.push_back(0); indices.push_back(1); indices.push_back(2);
-                              indices.push_back(1); indices.push_back(3); indices.push_back(4);
-                              indices.push_back(5); indices.push_back(6); indices.push_back(3);
-                              indices.push_back(7); indices.push_back(3); indices.push_back(6);
-                              indices.push_back(2); indices.push_back(4); indices.push_back(7);
-                              indices.push_back(0); indices.push_back(7); indices.push_back(6);
-                              indices.push_back(0); indices.push_back(5); indices.push_back(1);
-                              indices.push_back(1); indices.push_back(5); indices.push_back(3);
-                              indices.push_back(5); indices.push_back(0); indices.push_back(6);
-                              indices.push_back(7); indices.push_back(4); indices.push_back(3);
-                              indices.push_back(2); indices.push_back(1); indices.push_back(4);
-                              indices.push_back(0); indices.push_back(2); indices.push_back(7);
+    indices.push_back(1); indices.push_back(3); indices.push_back(4);
+    indices.push_back(5); indices.push_back(6); indices.push_back(3);
+    indices.push_back(7); indices.push_back(3); indices.push_back(6);
+    indices.push_back(2); indices.push_back(4); indices.push_back(7);
+    indices.push_back(0); indices.push_back(7); indices.push_back(6);
+    indices.push_back(0); indices.push_back(5); indices.push_back(1);
+    indices.push_back(1); indices.push_back(5); indices.push_back(3);
+    indices.push_back(5); indices.push_back(0); indices.push_back(6);
+    indices.push_back(7); indices.push_back(4); indices.push_back(3);
+    indices.push_back(2); indices.push_back(1); indices.push_back(4);
+    indices.push_back(0); indices.push_back(2); indices.push_back(7);
     // for (size_t i = 0; i < data->faces.size(); i++)
     //     for (int j = 0; j < 3; j++) {
     //         indices.push_back(static_cast<unsigned int>(data->faces[i].verticesIndex[j]));
@@ -121,7 +123,7 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
-    glDrawElements(GL_TRIANGLES, vertices.size() * 3, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, projections.size() * 3, GL_UNSIGNED_INT, 0);
 
     glDisableVertexAttribArray(0);
 }
@@ -129,8 +131,7 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
 void onPress(Window<ObjParser *> *win, ObjParser *data) {
     (void)win;
     (void)data;
-    position.z -= 0.2;
-    position.x += 0.2;
+    scale += 0.22;
     std::cout << "press\n";
 }
 
@@ -139,6 +140,7 @@ int main(int ac, char **av) {
         std::cerr << "Incorrect input\n";
         exit(1);
     }
+
     ObjParser parser(av[1]);
 
     Window<ObjParser *> window;

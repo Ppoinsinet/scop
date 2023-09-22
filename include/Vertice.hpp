@@ -8,7 +8,7 @@ class Vertice: public Vector3<GLfloat> {
 
 public:
 
-    Vertice() : Vector3<GLfloat>(0,0,0) {}
+    Vertice() : Vector3<GLfloat>(0.0f,0.0f,0.0f) {}
     Vertice(float x, float y, float z);
 };
 

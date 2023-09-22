@@ -1,29 +1,40 @@
 #ifndef VECTOR3_HPP
 #define VECTOR3_HPP
 
-#include <iostream>
+#include "Matrix.hpp"
 
 template <class T = int>
-class Vector3 {
+class Vector3: public Matrix<3, 1, T> {
 public:
 
-    T x;
-    T y;
-    T z;
-
-    Vector3() : x(T()), y(T()), z(T())
+    Vector3()
+    : Matrix<3, 1, T>()
     {}
 
-    Vector3(T xVal, T yVal, T zVal):
-    x(xVal), y(yVal), z(zVal) {}
+    Vector3(T xVal, T yVal, T zVal)
+    : Matrix<3, 1, T>()
+    {
+        Matrix<3, 1, T>::data[0] = xVal;
+        Matrix<3, 1, T>::data[1] = yVal;
+        Matrix<3, 1, T>::data[2] = zVal;
+    }
 
-    Vector3(const Vector3<T> &ref)
-    : x(ref.x), y(ref.y), z(ref.z) {}
+    Vector3(const Matrix<3, 1, T> &ref)
+    : Matrix<3, 1, T>()
+    {
+        Matrix<3, 1, T>::data[0] = ref.data[0];
+        Matrix<3, 1, T>::data[1] = ref.data[1];
+        Matrix<3, 1, T>::data[2] = ref.data[2];
+    }
 
-    Vector3 &operator=(const Vector3<T> &ref) {
-        x = ref.x;
-        y = ref.y;
-        z = ref.z;
+    T &x() {return Matrix<3, 1, T>::data[0];}
+    T &y() {return Matrix<3, 1, T>::data[1];}
+    T &z() {return Matrix<3, 1, T>::data[2];}
+
+    Vector3 &operator=(const Matrix<3, 1, T> &ref) {
+        Matrix<3, 1, T>::data[0] = ref.data[0];
+        Matrix<3, 1, T>::data[1] = ref.data[1];
+        Matrix<3, 1, T>::data[2] = ref.data[2];
         return *this;
     }
 };
