@@ -18,6 +18,7 @@ int main(int ac, char **av) {
     position.Identity();
 
     ObjParser parser(av[1]);
+    std::cout << parser.vertices.size() << " vertices\n";
 
     Window<ObjParser *> window;
 
@@ -41,6 +42,7 @@ int main(int ac, char **av) {
         window.keyHandle[GLFW_KEY_S] = onPress;
 
         window.fpsLimit = 200;
+        window.width = 300;
         window.initFunction = onInit;
         window.create();
         window.updateFunction = onUpdate;
