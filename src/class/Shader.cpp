@@ -23,6 +23,7 @@ Shader::Shader(const ShaderType type, const std::string &filePath)
 
 
     id = glCreateShader(type == VERTEX_SHADER ? GL_VERTEX_SHADER : GL_FRAGMENT_SHADER);
+    std::cout << "id : " << id << "\n";
     
     glShaderSource(id, 1, &codePointer, NULL);
     glCompileShader(id);

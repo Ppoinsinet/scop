@@ -11,9 +11,11 @@
 
 #include <math.h>
 
+
+#define GL_SILENCE_DEPRECATION
 #define GL_GLEXT_PROTOTYPES
 #include <GLFW/glfw3.h>
-#include <GL/gl.h>
+#include <GLUT/glut.h>
 
 
 #include "Matrix.hpp"
@@ -60,7 +62,7 @@ void useShaders(Window<T> *window) {
     glUseProgram(programId);
 }
 
-std::vector<Vector3<GLfloat>> &verticesOperations(std::vector<Vector3<GLfloat>> &vertices);
+std::vector<Vector3<GLfloat> > &verticesOperations(std::vector<Vector3<GLfloat> > &vertices);
 
 
 #endif

@@ -6,7 +6,7 @@
 #include <math.h>
 
 Matrix<4, 1, GLfloat> position;
-std::vector<Vector3<GLfloat>> vertices;
+std::vector<Vector3<GLfloat> > vertices;
 std::vector<unsigned int> indices;
 
 int main(int ac, char **av) {
@@ -41,7 +41,7 @@ int main(int ac, char **av) {
         window.keyHandle[GLFW_KEY_W] = onPress;
         window.keyHandle[GLFW_KEY_S] = onPress;
 
-        window.fpsLimit = 200;
+        window.fpsLimit = 60;
         window.width = 300;
         window.initFunction = onInit;
         window.create();

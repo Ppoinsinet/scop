@@ -1,6 +1,6 @@
 #include "scop.hpp"
 
-extern std::vector<Vector3<GLfloat>> vertices;
+extern std::vector<Vector3<GLfloat> > vertices;
 extern Matrix<4, 1, GLfloat> position;
 
 void onPress(Window<ObjParser *> *win, ObjParser *data, int key) {

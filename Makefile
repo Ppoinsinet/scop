@@ -9,7 +9,7 @@ CC = clang++
 
 FLAGS = -Wall -Wextra -Werror -g
 
-LIBS = -lglfw -lGL
+LIBS = -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit
 
 INCLUDE = include/
 

@@ -1,6 +1,6 @@
 #include "scop.hpp"
 
-extern std::vector<Vector3<GLfloat>> vertices;
+extern std::vector<Vector3<GLfloat> > vertices;
 extern std::vector<unsigned int> indices;
 
 void onInit(Window<ObjParser *> *win, ObjParser *data) {

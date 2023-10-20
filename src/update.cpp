@@ -31,7 +31,7 @@ Matrix<4, 4, GLfloat> getProjection(GLfloat aspectRatio) {
     };
 }
 
-extern std::vector<Vector3<GLfloat>> vertices;
+extern std::vector<Vector3<GLfloat> > vertices;
 extern std::vector<unsigned int> indices;
 
 Matrix<4, 1, GLfloat> normalize(const Matrix<4, 1, GLfloat> &a) {
@@ -53,8 +53,8 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
 
     std::cout << "vertices : " << vertices.size() << " et indices : " << indices.size() << "\n";
 
-    auto rotation = getRotation();
-    auto projection = getProjection(aspectRatio);
+    Matrix<4U, 4U, GLfloat> rotation = getRotation();
+    Matrix<4U, 4U, GLfloat> projection = getProjection(aspectRatio);
     
 
     Matrix<4, 4, GLfloat> translation = (GLfloat[]) {
@@ -64,7 +64,7 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
         0.0f, 0.0f, 0.0f, 1.0f
     };
     
-    std::vector<Matrix<4, 1, GLfloat>> result;
+    std::vector<Matrix<4, 1, GLfloat> > result;
 
     for (size_t i = 0; i < vertices.size(); i++) {
 
