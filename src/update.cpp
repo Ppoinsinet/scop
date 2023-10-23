@@ -51,7 +51,7 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
     
     GLfloat aspectRatio = (GLfloat)win->width / (GLfloat)win->height;
 
-    // std::cout << "vertices : " << vertices.size() << " et indices : " << indices.size() << "\n";
+    // std::cout << "vertmices : " << vertices.size() << " et indices : " << indices.size() << "\n";
 
     Matrix<4U, 4U, GLfloat> rotation = getRotation();
     Matrix<4U, 4U, GLfloat> projection = getProjection(aspectRatio);
@@ -83,7 +83,7 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
 
     // Position VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, result.size() * sizeof(Matrix<4, 1, GLfloat>), result.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, result.size() * sizeof(result[0]), result.data(), GL_DYNAMIC_DRAW);
 
     // draw
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), nullptr);

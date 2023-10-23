@@ -1,8 +1,12 @@
-// in vec3 in_Position;
-// in vec3 in_Color;
-// out vec3 pass_Color;
+#version 410 core
 
-void main(void) {
-	gl_Position = vec4(gl_Vertex);
-	// pass_Color = in_Color;
+in vec3 position;
+in vec2 textureCoords;
+out vec2 color;
+
+void main(void)
+{
+
+    gl_Position = vec4(position.x, position.y, position.z, 1.0);
+    color = vec2(1.0,0.5);
 }

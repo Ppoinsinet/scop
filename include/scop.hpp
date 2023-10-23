@@ -51,6 +51,9 @@ void useShaders(Window<T> *window) {
     Shader fragment(FRAGMENT_SHADER, FRAGMENT_SHADER_FILEPATH);
 
     int programId = glCreateProgram();
+
+    // glBindAttribLocation(programId, 0, "inPosition");
+
     glAttachShader(programId, vertex.getId());
     glAttachShader(programId, fragment.getId());
     glLinkProgram(programId);

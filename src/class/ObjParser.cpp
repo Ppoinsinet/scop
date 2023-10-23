@@ -30,6 +30,10 @@ ObjParser::ObjParser(std::string filePath) {
     std::fstream file(filePath);
     int smoothingGroup = 0;
 
+    if (!file.is_open()) {
+        std::cerr << "File could not be opened\n";
+        exit(1);
+    }
     for (std::string line; std::getline(file, line);) {
         std::string::size_type commentIndex;
         if ((commentIndex = line.find('#')) != std::string::npos) {

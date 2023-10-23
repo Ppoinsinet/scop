@@ -63,11 +63,15 @@ public:
     }
 
     ~Window() {
+        glBindVertexArray(0);
+
         glfwDestroyWindow(window);
         glfwTerminate();
     }
 
     void initGlfw() {
+        if (!glfwInit())
+            throw "Failed to init GLFW";
         glfwWindowHint(GLFW_SAMPLES, 4);
         glfwWindowHint(GLFW_COCOA_CHDIR_RESOURCES, GLFW_FALSE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -77,8 +81,6 @@ public:
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         glfwWindowHint(GLFW_RESIZABLE, resizable == true ? GLFW_TRUE : GLFW_FALSE);
-        if (!glfwInit())
-            throw "Failed to init GLFW";
     }
 
     void initGlew() {
@@ -88,6 +90,13 @@ public:
             std::cerr << "Error occured\n";
             exit(1);
         }
+        // int width, height;
+        // glfwGetFramebufferSize(window, &width, &height);
+        // glViewport(0, 0, width, height);
+
+        unsigned int VAO = 0;
+        glGenVertexArrays(1, &VAO);
+        glBindVertexArray(VAO);
 
         std::cout << "OPENGL VERSION : " << glGetString(GL_VERSION) << "\n";
         std::cout << "GLSL VERSION : " << glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n";
