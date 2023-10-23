@@ -57,10 +57,7 @@ public:
 
     Window() : window(nullptr), monitor(nullptr), running(false), resizable(true), height(500), width(500), title("My super window"), fpsLimit(60), updateFunction(nullptr), initFunction(nullptr), closeFunction(nullptr), data(nullptr)
     {
-        glfwWindowHint(GLFW_SAMPLES, 4);
-        glfwWindowHint(GLFW_RESIZABLE, resizable == true ? GLFW_TRUE : GLFW_FALSE);
-        if (!glfwInit())
-            throw "Failed to init GLFW";
+        
 
         keyHandle[GLFW_KEY_ESCAPE] = defaultOnEscape;
     }
@@ -70,13 +67,43 @@ public:
         glfwTerminate();
     }
 
+    void initGlfw() {
+        glfwWindowHint(GLFW_SAMPLES, 4);
+        glfwWindowHint(GLFW_COCOA_CHDIR_RESOURCES, GLFW_FALSE);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+        glfwWindowHint(GLFW_RESIZABLE, resizable == true ? GLFW_TRUE : GLFW_FALSE);
+        if (!glfwInit())
+            throw "Failed to init GLFW";
+    }
+
+    void initGlew() {
+        // https://glew.sourceforge.net/basic.html
+        GLenum err = glewInit();
+        if (err != GLEW_OK) {
+            std::cerr << "Error occured\n";
+            exit(1);
+        }
+
+        std::cout << "OPENGL VERSION : " << glGetString(GL_VERSION) << "\n";
+        std::cout << "GLSL VERSION : " << glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n";
+    }
+
 
     void create() {
+        initGlfw();
+
         window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
         if (window == nullptr)
             throw std::runtime_error("Could not create window");
         glfwMakeContextCurrent(window);
         monitor = glfwGetPrimaryMonitor();
+        
+        initGlew();
     }
 
     void stop() {

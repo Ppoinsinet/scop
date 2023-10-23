@@ -51,7 +51,7 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
     
     GLfloat aspectRatio = (GLfloat)win->width / (GLfloat)win->height;
 
-    std::cout << "vertices : " << vertices.size() << " et indices : " << indices.size() << "\n";
+    // std::cout << "vertices : " << vertices.size() << " et indices : " << indices.size() << "\n";
 
     Matrix<4U, 4U, GLfloat> rotation = getRotation();
     Matrix<4U, 4U, GLfloat> projection = getProjection(aspectRatio);

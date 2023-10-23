@@ -8,15 +8,16 @@
 #include <sstream>
 #include <map>
 #include <stdexcept>
+#include <unistd.h>
 
 #include <math.h>
 
 
 #define GL_SILENCE_DEPRECATION
 #define GL_GLEXT_PROTOTYPES
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <GLUT/glut.h>
-
+// #include <GL/gl.h>
 
 #include "Matrix.hpp"
 #include "Vector2.hpp"
@@ -38,13 +39,14 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data);
 
 #define VERTEX_SHADER_FILEPATH "./vertex.shader"
 #define FRAGMENT_SHADER_FILEPATH "./fragment.shader"
+void printCwd(void);
 
 template <class T>
 void useShaders(Window<T> *window) {
     (void)window;
     char logs[512];
     int success = 0;
-
+        printCwd();
     Shader vertex(VERTEX_SHADER, VERTEX_SHADER_FILEPATH);
     Shader fragment(FRAGMENT_SHADER, FRAGMENT_SHADER_FILEPATH);
 
@@ -54,8 +56,10 @@ void useShaders(Window<T> *window) {
     glLinkProgram(programId);
 
     glGetProgramiv(programId, GL_LINK_STATUS, &success);
+    std::cout << "test " << vertex.getId() << " et " << fragment.getId() << "\n";
     if (!success) {
         glGetProgramInfoLog(programId, sizeof(logs), NULL, logs);
+        std::cout << "error : " << logs << "\n";
         throw logs;
     }
 

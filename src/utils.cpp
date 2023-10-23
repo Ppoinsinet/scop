@@ -18,3 +18,9 @@ std::vector<std::string> split (const std::string &s, std::string delim) {
 
     return r;
 }
+
+void printCwd() {
+    char tmp[512];
+    getcwd(tmp, 512) ;
+    std::cout << "currentPath : " << tmp << "\n";
+}

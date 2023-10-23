@@ -3,6 +3,7 @@
 #define WINDOW_HEIGHT 150
 #define WINDOW_WIDTH 150
 
+
 #include <math.h>
 
 Matrix<4, 1, GLfloat> position;
@@ -10,6 +11,7 @@ std::vector<Vector3<GLfloat> > vertices;
 std::vector<unsigned int> indices;
 
 int main(int ac, char **av) {
+        printCwd();
     if (ac != 2) {
         std::cerr << "Incorrect input\n";
         exit(1);
@@ -21,13 +23,13 @@ int main(int ac, char **av) {
     std::cout << parser.vertices.size() << " vertices\n";
 
     Window<ObjParser *> window;
-
+    
+    // const GLubyte *i = glGetString(GL_SHADING_LANGUAGE_VERSION);
+    // std::cout << "shading language version : " << i << "\n";
     try
     {
         // youtube video : https://www.youtube.com/watch?v=LhQ85bPCAJ8
 
-        // useShaders(&window);
-        
         // glEnable(GL_CULL_FACE);
         // glFrontFace(GL_CW);
         // glCullFace(GL_BACK);
@@ -45,6 +47,8 @@ int main(int ac, char **av) {
         window.width = 300;
         window.initFunction = onInit;
         window.create();
+        useShaders(&window);
+
         window.updateFunction = onUpdate;
 
         window.start();

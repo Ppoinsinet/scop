@@ -6,6 +6,7 @@ const std::string Shader::getType() const {
     return "FRAGMENT_SHADER";
 }
 
+#include <unistd.h>
 Shader::Shader(const ShaderType type, const std::string &filePath)
 : type(type), filePath(filePath)
 {
@@ -16,14 +17,17 @@ Shader::Shader(const ShaderType type, const std::string &filePath)
     for (size_t i = 0; i < sizeof(logs); i++) logs[i] = 0;
 
     file.open(filePath);
+    
+    // std::cout << "erno : " << strerror(errno) << " avec '" << filePath << "'\n";
     stream << file.rdbuf();
+    // std::cout << "file is open ? " << file.is_open() << " avec " << stream.str().size() << " et " << filePath << "\n";
 
     code = stream.str();
     codePointer = code.c_str();
 
 
     id = glCreateShader(type == VERTEX_SHADER ? GL_VERTEX_SHADER : GL_FRAGMENT_SHADER);
-    std::cout << "id : " << id << "\n";
+    // std::cout << "id : " << id << " avec " << file.is_open() << "\n";
     
     glShaderSource(id, 1, &codePointer, NULL);
     glCompileShader(id);
@@ -32,7 +36,8 @@ Shader::Shader(const ShaderType type, const std::string &filePath)
     if (!success) {
         std::cout << "mince : " << logs << " avec " << id << "\n";
         glGetShaderInfoLog(id, sizeof(logs), NULL, logs);
-        throw std::runtime_error("ERROR: (" + getType() + " COMPILATION) :\n");
+        
+        throw std::runtime_error("ERROR: (" + getType() + " COMPILATION) :\n" + logs);
     }
 }
 
