@@ -44,6 +44,8 @@ int main(int ac, char **av) {
         window.fpsLimit = 60;
         window.width = 300;
         window.initFunction = onInit;
+        window.cursor.hidden = false;
+        window.cursor.centered = false;
         window.create();
 
         useShaders(&window);

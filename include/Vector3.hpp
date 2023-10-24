@@ -7,38 +7,40 @@ template <class T = int>
 class Vector3: public Matrix<3, 1, T> {
 public:
 
+    typedef Matrix<3, 1, T> MatrixType;
+
+    T &x;
+    T &y;
+    T &z;
+
     Vector3()
-    : Matrix<3, 1, T>()
+    : x(MatrixType::data[0]), y(MatrixType::data[1]), z(MatrixType::data[2])
     {}
 
     Vector3(T xVal, T yVal, T zVal)
-    : Matrix<3, 1, T>()
+    : x(MatrixType::data[0]), y(MatrixType::data[1]), z(MatrixType::data[2])
     {
-        Matrix<3, 1, T>::data[0] = xVal;
-        Matrix<3, 1, T>::data[1] = yVal;
-        Matrix<3, 1, T>::data[2] = zVal;
+        x = xVal;
+        y = yVal;
+        z = zVal;
     }
 
-    Vector3(const Matrix<3, 1, T> &ref)
-    : Matrix<3, 1, T>()
+    Vector3(const Vector3<T> &ref)
+    : x(MatrixType::data[0]), y(MatrixType::data[1]), z(MatrixType::data[2])
     {
-        Matrix<3, 1, T>::data[0] = ref.data[0];
-        Matrix<3, 1, T>::data[1] = ref.data[1];
-        Matrix<3, 1, T>::data[2] = ref.data[2];
+        x = ref.x;
+        y = ref.y;
+        z = ref.z;
     }
 
-    Matrix<3, 1, T> getMatrice() {
-        return Matrix<3, 1, T>(Matrix<3, 1, T>::data);
+    MatrixType getMatrice() {
+        return *this;
     }
 
-    T &x() {return Matrix<3, 1, T>::data[0];}
-    T &y() {return Matrix<3, 1, T>::data[1];}
-    T &z() {return Matrix<3, 1, T>::data[2];}
-
-    Vector3 &operator=(const Matrix<3, 1, T> &ref) {
-        Matrix<3, 1, T>::data[0] = ref.data[0];
-        Matrix<3, 1, T>::data[1] = ref.data[1];
-        Matrix<3, 1, T>::data[2] = ref.data[2];
+    Vector3 &operator=(const Vector3<T> &ref) {
+        x = ref.x;
+        y = ref.y;
+        z = ref.z;
         return *this;
     }
 };

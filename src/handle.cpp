@@ -9,22 +9,22 @@ void onPress(Window<ObjParser *> *win, ObjParser *data, int key) {
     static float val = 0.02;
 
     if (key == GLFW_KEY_RIGHT) {
-        position.data[0] += val;
+        position[0] += val;
     }
     else if (key == GLFW_KEY_LEFT) {
-        position.data[0] -= val;
+        position[0] -= val;
     }
     else if (key == GLFW_KEY_UP) {
-        position.data[1] += val;
+        position[1] += val;
     }
     else if (key == GLFW_KEY_DOWN) {
-        position.data[1] -= val;
+        position[1] -= val;
     }
     else if (key == GLFW_KEY_W) {
-        position.data[2] += val;
+        position[2] += val;
     }
     else if (key == GLFW_KEY_S) {
-        position.data[2] -= val;
+        position[2] -= val;
     } else
         return ;
     // scale += 0.22;

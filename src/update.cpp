@@ -40,18 +40,6 @@ Matrix<4, 4, GLfloat> getProjection(GLfloat aspectRatio) {
 extern std::vector<Vector3<GLfloat> > vertices;
 extern std::vector<unsigned int> indices;
 
-Matrix<4, 1, GLfloat> normalize(const Matrix<4, 1, GLfloat> &a) {
-    GLfloat norme = sqrt(powf(a.data[0], 2) + powf(a.data[1], 2) + powf(a.data[2], 2) + powf(a.data[3], 2));
-
-    Matrix<4, 1, GLfloat> r(a);
-    r.data[0] /= norme;
-    r.data[1] /= norme;
-    r.data[2] /= norme;
-    r.data[3] /= norme;
-    
-    return r;
-}
-
 void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
     (void)win;
     (void)data;
@@ -64,22 +52,22 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
     Matrix<4U, 4U, GLfloat> rotation = getRotation();
     Matrix<4U, 4U, GLfloat> projection = getProjection(aspectRatio);
 
-    float minX = vertices[0].data[0];
+    float minX = vertices[0].x;
     float maxX = minX;
 
-    float minZ = vertices[0].data[2];
+    float minZ = vertices[0].z;
     float maxZ = minZ;
 
     for (unsigned int i  = 1; i < vertices.size(); i++) {
-        if (vertices[i].data[0] < minX)
-            minX = vertices[i].data[0];
-        if (vertices[i].data[0] > maxX)
-            maxX = vertices[i].data[0];
+        if (vertices[i].x < minX)
+            minX = vertices[i].x;
+        if (vertices[i].x > maxX)
+            maxX = vertices[i].x;
 
-        if (vertices[i].data[2] < minZ)
-            minZ = vertices[i].data[2];
-        if (vertices[i].data[2] > maxZ)
-            maxZ = vertices[i].data[2];
+        if (vertices[i].z < minZ)
+            minZ = vertices[i].z;
+        if (vertices[i].z > maxZ)
+            maxZ = vertices[i].z;
     }
 
     Matrix<4, 4, GLfloat> translation = (GLfloat[]) {
@@ -89,13 +77,12 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
         0.0f, 0.0f, 0.0f, 1.0f
     };
 
-    Camera camera;
-    camera.position = Vector3<GLfloat>(position.data[0], position.data[1], -5);
+    win->camera.position = Vector3<GLfloat>(position[0], position[1], -5);
 
     (void)rotation;
     (void)translation;
     
-    Matrix<4, 4, GLfloat> transformationMatrix = projection * camera.getMatrix() * rotation * translation;    
+    Matrix<4, 4, GLfloat> transformationMatrix = projection * rotation * translation;    
     (void)transformationMatrix;
     glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, transformationMatrix.data);
 

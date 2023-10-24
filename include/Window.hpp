@@ -3,6 +3,8 @@
 
 #include "scop.hpp"
 #define MAX_BUFFER
+#include "Cursor.hpp"
+#include "Camera.hpp"
 
 template <class T = void>
 class Window {
@@ -20,7 +22,11 @@ private:
 
     void clear() {
         glClearColor(0.0, 0.0, 0.0, 0.0);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    void centerCursor() {
+        glfwSetCursorPos(window, width / 2, height / 2);
     }
 
     void input() {
@@ -30,6 +36,16 @@ private:
         for (; it != keyHandle.end(); it++) {
             if (glfwGetKey(window, it->first) == GLFW_PRESS && it->second != nullptr)
                 it->second(this, data, it->first);
+        }
+
+        Vector2<double> tmp;
+        glfwGetCursorPos(window, &tmp.x, &tmp.y);
+        if (tmp.x != cursor.position.x || tmp.y != cursor.position.y) {
+            if (cursor.onMouvement)
+                cursor.onMouvement(this, tmp, cursor.position);
+            cursor.position.setData(tmp.data);
+            if (this->cursor.centered == true)
+                centerCursor();
         }
     }
 
@@ -54,11 +70,25 @@ public:
     callbackFunction closeFunction;
 
     T data;
+    Cursor cursor;
+    Camera camera;
+
+    static void onMouvement(void *data, Vector2<double> newPos, Vector2<double> oldPos) {
+        Vector2<double> diff;
+        diff.x = newPos.x - oldPos.x;
+        diff.y = newPos.y - oldPos.y;
+        std::cout << " test " << diff.x << " et " << diff.y << "\n";
+
+        Window<T> *win = static_cast<Window<T>*>(data);
+        win->camera.pitch += diff.y;
+        win->camera.yaw += diff.x;
+        
+    }
+
 
     Window() : window(nullptr), monitor(nullptr), running(false), resizable(true), height(500), width(500), title("My super window"), fpsLimit(60), updateFunction(nullptr), initFunction(nullptr), closeFunction(nullptr), data(nullptr)
     {
-        
-
+        cursor.onMouvement = onMouvement;
         keyHandle[GLFW_KEY_ESCAPE] = defaultOnEscape;
     }
 
@@ -95,6 +125,7 @@ public:
         // glViewport(0, 0, width, height);
 
         glEnable(GL_CULL_FACE);
+        glEnable(GL_DEPTH_TEST);
         glFrontFace(GL_CW);
         glCullFace(GL_BACK);
 
@@ -104,6 +135,10 @@ public:
 
         std::cout << "OPENGL VERSION : " << glGetString(GL_VERSION) << "\n";
         std::cout << "GLSL VERSION : " << glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n";
+
+        int i;
+        glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &i);
+        std::cout << "GL MAX TEXTURE IMAGE UNITS : " << i << "\n";
     }
 
 
@@ -116,6 +151,11 @@ public:
         glfwMakeContextCurrent(window);
         monitor = glfwGetPrimaryMonitor();
         
+        if (cursor.hidden == true)
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        if (cursor.centered == true)
+            centerCursor();
+
         initGlew();
     }
 

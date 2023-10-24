@@ -3,24 +3,29 @@
 
 #include <iostream>
 #include <type_traits>
+#include <math.h>
+
 
 template<unsigned int N, unsigned int M, class T = int>
 class Matrix {
 public:
     T data[N * M];
 
-    Matrix() {
+    Matrix()
+    {
         for (unsigned int i = 0; i < N * M; i++) {
             data[i] = T();
         }
     }
 
-    Matrix(const Matrix<N, M, T> &ref) {
+    Matrix(const Matrix<N, M, T> &ref)
+    {
         for (unsigned int i = 0; i < N * M; i++)
-            data[i] = ref.data[i];
+            data[i] = ref[i];
     }
 
-    Matrix(const T tab[N * M]) {
+    Matrix(const T tab[N * M])
+    {
         for (unsigned int i = 0; i < N * M; i++)
             data[i] = tab[i];
     }
@@ -30,7 +35,7 @@ public:
         Matrix<N, N, T> r;
         for (unsigned int i = 0; i < M * M; i++) {
             if (i == step) {
-                r.data[i] = 1;
+                r[i] = 1;
                 step += 1 + M;
             }
         }
@@ -45,7 +50,7 @@ public:
 
     Matrix<N, M, T> &operator=(const Matrix<N, M, T> &ref) {
         for (unsigned int i = 0; i < N * M; i++)
-            data[i] = ref.data[i];
+            data[i] = ref[i];
         return *this;
     }
 
@@ -53,7 +58,7 @@ public:
         Matrix<N, M, T> r;
 
         for (unsigned int i = 0; i < N * M; i++)
-            r.data[i] = data[i] + ref.data[i];
+            r[i] = data[i] + ref[i];
         return r;
     }
 
@@ -61,13 +66,13 @@ public:
         Matrix<N, M, T> r;
 
         for (unsigned int i = 0; i < N * M; i++)
-            r.data[i] = data[i] - ref.data[i];
+            r[i] = data[i] - ref[i];
         return r;
     }
 
     Matrix<N, M, T> &operator+=(const Matrix<N, M, T> &ref) {
         for (unsigned int i = 0; i < N * M; i++)
-            data[i] += ref.data[i];
+            data[i] += ref[i];
         return *this;
     }
 
@@ -78,7 +83,7 @@ public:
 
             for (size_t y = 0; y < M; y++) {
 
-                r.data[(x * M) + y] = data[x + (y * M)];
+                r[(x * M) + y] = data[x + (y * M)];
             }
         }
         return r;
@@ -86,8 +91,16 @@ public:
 
     Matrix<N, M, T> &operator-=(const Matrix<N, M, T> &ref) {
         for (unsigned int i = 0; i < N * M; i++)
-            data[i] -= ref.data[i];
+            data[i] -= ref[i];
         return *this;
+    }
+
+    T& operator[](int index) {
+        return data[index];
+    }
+
+    const T& operator[](int index) const {
+        return data[index];
     }
 
     template <unsigned int A>
@@ -95,7 +108,7 @@ public:
         T r = T();
 
         for (unsigned int i = 0; i < A; i++)
-            r += row.data[i] * col.data[i];
+            r += row[i] * col[i];
         return r;
     }
     
@@ -103,7 +116,7 @@ public:
         Matrix<N, 1, T> r;
 
         for (unsigned int i = 0; i < N; i++) {
-            r.data[i] = data[index + (M * i)];
+            r[i] = data[index + (M * i)];
         }
         return r;
     }
@@ -112,7 +125,7 @@ public:
         Matrix<1, M, T> r;
 
         for (unsigned int i = 0; i < M; i++) {
-            r.data[i] = data[(index * M) + i];
+            r[i] = data[(index * M) + i];
         }
         return r;
     }
@@ -125,7 +138,7 @@ public:
         
             for (unsigned int y = 0; y < N; y++) {
 
-                r.data[(y * X) + x] = getSum(getRow(y), ref.getColumn(x));
+               r[(y * X) + x] = getSum(getRow(y), ref.getColumn(x));
             }
         }
         return r;
@@ -136,12 +149,27 @@ public:
             data[i] = val[i];
     }
 
+    typename std::enable_if<std::is_arithmetic<T>::value, Matrix<N, M, T>& >::type normalize() {
+        float norme = 0;
+
+        for (unsigned int i = 0; i < N * M; i++) {
+            norme += powf(data[i], 2);
+        }
+
+        norme = sqrt(norme);
+        for (unsigned int i = 0; i < N * M; i++) {
+            data[i] /= norme;
+        }
+        
+        return *this;
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const Matrix<N, M, T>& a) {
         for (unsigned int i = 0; i < N * M; i++) {
 
             if (i && !(i % M))
                 os << "\n";
-            os << a.data[i] << " ";
+            os << a[i] << " ";
         }
         os << "\n";
         return os;
