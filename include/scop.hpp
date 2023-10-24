@@ -27,6 +27,7 @@
 #include "ObjParser.hpp"
 #include "Window.hpp"
 #include "Shader.hpp"
+#include "Camera.hpp"
 
 std::vector<std::string> split (const std::string &s, std::string delim);
 
