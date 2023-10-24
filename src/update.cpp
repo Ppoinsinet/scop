@@ -64,14 +64,49 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
     Matrix<4U, 4U, GLfloat> rotation = getRotation();
     Matrix<4U, 4U, GLfloat> projection = getProjection(aspectRatio);
 
+    float minX = vertices[0].data[0];
+    float maxX = minX;
+
+    float minZ = vertices[0].data[2];
+    float maxZ = minZ;
+
+    for (unsigned int i  = 1; i < vertices.size(); i++) {
+        if (vertices[i].data[0] < minX)
+            minX = vertices[i].data[0];
+        if (vertices[i].data[0] > maxX)
+            maxX = vertices[i].data[0];
+
+        if (vertices[i].data[2] < minZ)
+            minZ = vertices[i].data[2];
+        if (vertices[i].data[2] > maxZ)
+            maxZ = vertices[i].data[2];
+    }
+    std::cout << "min X = " << minZ << " et max X = " << maxZ << " donc avg = " << (minZ + maxZ / 2) << "\n";
+
     Matrix<4, 4, GLfloat> translation = (GLfloat[]) {
-        1.0f, 0.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f, -(minX + maxX) / 2,
         0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 10.0f,
+        0.0f, 0.0f, 1.0f, -(minZ + maxZ) / 2,
         0.0f, 0.0f, 0.0f, 1.0f
     };
+
+    Vector3<GLfloat> U = Vector3<GLfloat>(1, 0, 0);
+    Vector3<GLfloat> V = Vector3<GLfloat>(0, 1, 0);
+    Vector3<GLfloat> N = Vector3<GLfloat>(0, 0, 1);
+
+    Vector3<GLfloat> cameraPos = Vector3<GLfloat>(position.data[0], position.data[1], -5);
+
+    Matrix<4, 4, GLfloat> camera = (GLfloat[]) {
+        U.x(), V.x(), N.x(), -cameraPos.x(),
+        U.y(), V.y(), N.y(), -cameraPos.y(),
+        U.z(), V.z(), N.z(), -cameraPos.z(),
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+
+    (void)rotation;
+    (void)translation;
     
-    Matrix<4, 4, GLfloat> transformationMatrix = projection * translation * rotation;    
+    Matrix<4, 4, GLfloat> transformationMatrix = projection * camera * rotation * translation;    
     (void)transformationMatrix;
     glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, transformationMatrix.data);
 
