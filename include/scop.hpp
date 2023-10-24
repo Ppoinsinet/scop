@@ -41,6 +41,8 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data);
 #define FRAGMENT_SHADER_FILEPATH "./fragment.shader"
 void printCwd(void);
 
+extern GLuint gWorldLocation;
+
 template <class T>
 void useShaders(Window<T> *window) {
     (void)window;
@@ -51,15 +53,16 @@ void useShaders(Window<T> *window) {
     Shader fragment(FRAGMENT_SHADER, FRAGMENT_SHADER_FILEPATH);
 
     int programId = glCreateProgram();
+    vertex.programId = programId;
+    fragment.programId = programId;
 
-    // glBindAttribLocation(programId, 0, "inPosition");
+    glGetUniformLocation(programId, "gWorld");
 
     glAttachShader(programId, vertex.getId());
     glAttachShader(programId, fragment.getId());
     glLinkProgram(programId);
 
     glGetProgramiv(programId, GL_LINK_STATUS, &success);
-    std::cout << "test " << vertex.getId() << " et " << fragment.getId() << "\n";
     if (!success) {
         glGetProgramInfoLog(programId, sizeof(logs), NULL, logs);
         std::cout << "error : " << logs << "\n";

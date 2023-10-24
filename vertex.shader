@@ -1,12 +1,14 @@
 #version 410 core
 
-in vec3 position;
-in vec2 textureCoords;
-out vec2 color;
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 colors;
+out vec3 color;
+
+uniform mat4 gWorld;
 
 void main(void)
 {
 
-    gl_Position = vec4(position.x, position.y, position.z, 1.0);
-    color = vec2(1.0,0.5);
+    gl_Position = gWorld * vec4(position, 1.0);
+    color = colors;
 }

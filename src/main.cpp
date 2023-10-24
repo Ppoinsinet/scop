@@ -10,6 +10,8 @@ Matrix<4, 1, GLfloat> position;
 std::vector<Vector3<GLfloat> > vertices;
 std::vector<unsigned int> indices;
 
+GLuint gWorldLocation;
+
 int main(int ac, char **av) {
         printCwd();
     if (ac != 2) {
@@ -30,10 +32,6 @@ int main(int ac, char **av) {
     {
         // youtube video : https://www.youtube.com/watch?v=LhQ85bPCAJ8
 
-        // glEnable(GL_CULL_FACE);
-        // glFrontFace(GL_CW);
-        // glCullFace(GL_BACK);
-
         window.data = &parser;
         window.keyHandle[GLFW_KEY_UP] = onPress;
         window.keyHandle[GLFW_KEY_DOWN] = onPress;
@@ -47,6 +45,7 @@ int main(int ac, char **av) {
         window.width = 300;
         window.initFunction = onInit;
         window.create();
+
         useShaders(&window);
 
         window.updateFunction = onUpdate;

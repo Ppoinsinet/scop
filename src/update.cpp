@@ -20,13 +20,19 @@ Matrix<4, 4, GLfloat> getRotation() {
 
 Matrix<4, 4, GLfloat> getProjection(GLfloat aspectRatio) {
 
-    GLfloat FOV = 90.0f;
+    GLfloat FOV = 45.0f;
     GLfloat d = 1.0f/((tanf(toRadian(FOV)/ 2.0f)));
+
+    float nearZ = 1.0f;
+    float farZ = 12.0f;
+
+    float A = (-farZ - nearZ) / (nearZ - farZ);
+    float B = (2.0f * farZ * nearZ) / (nearZ - farZ);
 
     return (GLfloat[]) {
         d/aspectRatio,    0.0f, 0.0f, 0.0f,
         0.0f,             d,    0.0f, 0.0f,
-        0.0f,             0.0f, 1.0f, 0.0f,
+        0.0f,             0.0f, A, B,
         0.0f,             0.0f, 1.0f, 0.0f
     };
 }
@@ -42,6 +48,7 @@ Matrix<4, 1, GLfloat> normalize(const Matrix<4, 1, GLfloat> &a) {
     r.data[1] /= norme;
     r.data[2] /= norme;
     r.data[3] /= norme;
+    
     return r;
 }
 
@@ -49,48 +56,55 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
     (void)win;
     (void)data;
     
+    glfwGetWindowSize(win->window, &win->width, &win->height);
     GLfloat aspectRatio = (GLfloat)win->width / (GLfloat)win->height;
 
     // std::cout << "vertmices : " << vertices.size() << " et indices : " << indices.size() << "\n";
 
     Matrix<4U, 4U, GLfloat> rotation = getRotation();
     Matrix<4U, 4U, GLfloat> projection = getProjection(aspectRatio);
-    
 
     Matrix<4, 4, GLfloat> translation = (GLfloat[]) {
         1.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 5.0f,
+        0.0f, 0.0f, 1.0f, 10.0f,
         0.0f, 0.0f, 0.0f, 1.0f
     };
     
-    std::vector<Matrix<4, 1, GLfloat> > result;
+    Matrix<4, 4, GLfloat> transformationMatrix = projection * translation * rotation;    
+    (void)transformationMatrix;
+    glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, transformationMatrix.data);
 
-    for (size_t i = 0; i < vertices.size(); i++) {
+    std::vector<Vector3<GLfloat> > colors;
+    srand(1);
+    for (unsigned int i = 0; i < vertices.size(); i++)
+        colors.push_back(Vector3<GLfloat>(((GLfloat)rand()) / RAND_MAX , ((GLfloat)rand()) / RAND_MAX, ((GLfloat)rand()) / RAND_MAX));
+    unsigned int CBO = 0;
+    glGenBuffers(1, &CBO);
 
-        Matrix<4, 1, GLfloat> k;
-        k.data[0] = vertices[i].data[0];
-        k.data[1] = vertices[i].data[1];
-        k.data[2] = vertices[i].data[2];
-        k.data[3] = 1.0f;
+    glBindBuffer(GL_ARRAY_BUFFER, CBO);
+    glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(Vector3<GLfloat>), colors.data(), GL_DYNAMIC_DRAW);
 
-        Matrix<4, 1, GLfloat> tmp = normalize((projection * translation * rotation) * k);
-        result.push_back(tmp);
-    }
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
+    glEnableVertexAttribArray(1);
+
 
     unsigned int VBO = 0;
     glGenBuffers(1, &VBO);
 
     // Position VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, result.size() * sizeof(result[0]), result.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vector3<GLfloat>), vertices.data(), GL_DYNAMIC_DRAW);
 
     // draw
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), nullptr);
     glEnableVertexAttribArray(0);
 
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 
     glDisableVertexAttribArray(0);
     glDeleteBuffers(1, &VBO);
+
+    glDisableVertexAttribArray(1);
+    glDeleteBuffers(1, &CBO);
 }

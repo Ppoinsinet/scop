@@ -7,8 +7,6 @@
 template <class T = void>
 class Window {
 private:
-    GLFWwindow *window;
-    GLFWmonitor *monitor;
 
     static void defaultOnEscape(Window *a, T data, int key) {
         (void)data;
@@ -39,6 +37,8 @@ public:
     typedef void(*callbackFunction)(Window*, T);
     typedef void(*keyCallbackFunction)(Window*, T, int);
 
+    GLFWwindow *window;
+    GLFWmonitor *monitor;
     bool running;
     bool resizable;
     int height;
@@ -93,6 +93,10 @@ public:
         // int width, height;
         // glfwGetFramebufferSize(window, &width, &height);
         // glViewport(0, 0, width, height);
+
+        glEnable(GL_CULL_FACE);
+        glFrontFace(GL_CW);
+        glCullFace(GL_BACK);
 
         unsigned int VAO = 0;
         glGenVertexArrays(1, &VAO);

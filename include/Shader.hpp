@@ -21,6 +21,7 @@ private:
     int id;
     
 public:
+    int programId;
     Shader(const ShaderType type, const std::string &filePath);
     ~Shader();
 
