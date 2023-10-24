@@ -65,6 +65,8 @@ public:
     Matrix<N, M, T> operator-(const Matrix<N, M, T> &ref) const {
         Matrix<N, M, T> r;
 
+        std::cout << "coucou\n";
+
         for (unsigned int i = 0; i < N * M; i++)
             r[i] = data[i] - ref[i];
         return r;

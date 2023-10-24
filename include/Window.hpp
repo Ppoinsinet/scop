@@ -43,7 +43,7 @@ private:
         if (tmp.x != cursor.position.x || tmp.y != cursor.position.y) {
             if (cursor.onMouvement)
                 cursor.onMouvement(this, tmp, cursor.position);
-            cursor.position.setData(tmp.data);
+            cursor.position = tmp;
             if (this->cursor.centered == true)
                 centerCursor();
         }
@@ -77,7 +77,7 @@ public:
         Vector2<double> diff;
         diff.x = newPos.x - oldPos.x;
         diff.y = newPos.y - oldPos.y;
-        std::cout << " test " << diff.x << " et " << diff.y << "\n";
+        // std::cout << " test " << diff.x << " et " << diff.y << "\n";
 
         Window<T> *win = static_cast<Window<T>*>(data);
         win->camera.pitch += diff.y;

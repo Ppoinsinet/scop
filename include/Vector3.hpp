@@ -14,11 +14,11 @@ public:
     T &z;
 
     Vector3()
-    : x(MatrixType::data[0]), y(MatrixType::data[1]), z(MatrixType::data[2])
+    : x(this->data[0]), y(this->data[1]), z(this->data[2])
     {}
 
     Vector3(T xVal, T yVal, T zVal)
-    : x(MatrixType::data[0]), y(MatrixType::data[1]), z(MatrixType::data[2])
+    : x(this->data[0]), y(this->data[1]), z(this->data[2])
     {
         x = xVal;
         y = yVal;
@@ -26,14 +26,29 @@ public:
     }
 
     Vector3(const Vector3<T> &ref)
-    : x(MatrixType::data[0]), y(MatrixType::data[1]), z(MatrixType::data[2])
+    : x(this->data[0]), y(this->data[1]), z(this->data[2])
     {
         x = ref.x;
         y = ref.y;
         z = ref.z;
     }
 
+    Vector3(const MatrixType &ref)
+    : x(this->data[0]), y(this->data[1]), z(this->data[2])
+    {
+        x = ref[0];
+        y = ref[1];
+        z = ref[2];
+    }
+
     MatrixType getMatrice() {
+        return *this;
+    }
+
+    Vector3 &operator=(const MatrixType &ref) {
+        x = ref[0];
+        y = ref[1];
+        z = ref[2];
         return *this;
     }
 

@@ -13,26 +13,39 @@ public:
     T &y;
 
     Vector2()
-    : x(MatrixType::data[0]), y(MatrixType::data[1])
+    : x(this->data[0]), y(this->data[1])
     {}
 
     Vector2(T xVal, T yVal)
-    : x(MatrixType::data[0]), y(MatrixType::data[1])
+    : x(this->data[0]), y(this->data[1])
     {
         x = xVal;
         y = yVal;
     }
 
     Vector2(const Vector2<T> &ref)
-    : x(MatrixType::data[0]), y(MatrixType::data[1])
+    : x(this->data[0]), y(this->data[1])
     {
         x = ref.x;
         y = ref.y;
     }
 
+    Vector2(const MatrixType &ref)
+    : x(this->data[0]), y(this->data[1])
+    {
+        x = ref[0];
+        y = ref[1];
+    }
+
     Vector2<T> &operator=(const Vector2<T> &ref) {
         x = ref.x;
         y = ref.y;
+        return *this;
+    }
+    
+    Vector2<T> &operator=(const MatrixType &ref) {
+        x = ref[0];
+        y = ref[1];
         return *this;
     }
 };

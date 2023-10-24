@@ -8,9 +8,7 @@ void onInit(Window<ObjParser *> *win, ObjParser *data) {
     (void)data;
 
 
-    for (size_t i = 0; i < data->vertices.size(); i++) {
-        vertices.push_back(data->vertices[i]);
-    }
+    vertices = data->vertices;
 
     for (size_t i = 0; i < data->faces.size(); i++) {
         for (int k = 0; k < 3; k++) {
@@ -18,29 +16,7 @@ void onInit(Window<ObjParser *> *win, ObjParser *data) {
             indices.push_back(data->faces[i].verticesIndex[k]);
         }
     }
-    // std::cout << "onInit : " << vertices.size() << " et " << indices.size() << "\n";
-
-    // vertices.push_back(Vector3<GLfloat>(0.5f, 0.5f, 0.5f));
-    // vertices.push_back(Vector3<GLfloat>(-0.5f, 0.5f, -0.5f));
-    // vertices.push_back(Vector3<GLfloat>(-0.5f, 0.5f, 0.5f));
-    // vertices.push_back(Vector3<GLfloat>(0.5f, -0.5f, -0.5f));
-    // vertices.push_back(Vector3<GLfloat>(-0.5f, -0.5f, -0.5f));
-    // vertices.push_back(Vector3<GLfloat>(0.5f, 0.5f, -0.5f));
-    // vertices.push_back(Vector3<GLfloat>(0.5f, -0.5f, 0.5f));
-    // vertices.push_back(Vector3<GLfloat>(-0.5f, -0.5f, 0.5f));
-
-    // indices.push_back(0); indices.push_back(1); indices.push_back(2);
-    // indices.push_back(1); indices.push_back(3); indices.push_back(4);
-    // indices.push_back(5); indices.push_back(6); indices.push_back(3);
-    // indices.push_back(7); indices.push_back(3); indices.push_back(6);
-    // indices.push_back(2); indices.push_back(4); indices.push_back(7);
-    // indices.push_back(0); indices.push_back(7); indices.push_back(6);
-    // indices.push_back(0); indices.push_back(5); indices.push_back(1);
-    // indices.push_back(1); indices.push_back(5); indices.push_back(3);
-    // indices.push_back(5); indices.push_back(0); indices.push_back(6);
-    // indices.push_back(7); indices.push_back(4); indices.push_back(3);
-    // indices.push_back(2); indices.push_back(1); indices.push_back(4);
-    // indices.push_back(0); indices.push_back(2); indices.push_back(7);
+    std::cout << "onInit : " << vertices.size() << " et " << indices.size() << "\n";
 
     unsigned int IBO = 0;
     glGenBuffers(1, &IBO);

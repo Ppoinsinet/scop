@@ -24,7 +24,7 @@ public:
     Camera() {
         position = Vector3<float>(0.0f, 0.0f, 0.0f);
         nearZ = 1.0f;
-        farZ = 10.0f;
+        farZ = 25.0f;
         FOV = 45;
 
         U = Vector3<float>(1.0f, 0.0f, 0.0f);
@@ -47,11 +47,8 @@ public:
 
         // tmpU.normalize();
 
-        std::cout << "Test avec pitch " << pitch << " et yaw " << yaw << "\n";
+        // std::cout << "Test avec pitch " << pitch << " et yaw " << yaw << "\n";
         
-
-
-
         Matrix<4, 4, float> m = (float[]) {
             tmpU.x, tmpU.y, tmpU.z, 0.0f,
             V.x, V.y, V.z, 0.0f,

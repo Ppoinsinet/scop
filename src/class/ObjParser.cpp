@@ -24,6 +24,7 @@ void ObjParser::addVertice(std::vector<std::string> line) {
 
     Vector3<GLfloat> tmp(std::stof(line[1]), std::stof(line[2]), std::stof(line[3]));
     vertices.push_back(tmp);
+
 }
 
 ObjParser::ObjParser(std::string filePath) {
