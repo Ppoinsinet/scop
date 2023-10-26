@@ -1,8 +1,7 @@
 #include "scop.hpp"
 
 #define WINDOW_HEIGHT 150
-#define WINDOW_WIDTH 150
-
+#define WINDOW_WIDTH 600
 
 #include <math.h>
 
@@ -42,9 +41,9 @@ int main(int ac, char **av) {
         window.keyHandle[GLFW_KEY_S] = onPress;
 
         window.fpsLimit = 60;
-        window.width = 300;
+        window.width = WINDOW_WIDTH;
         window.initFunction = onInit;
-        window.cursor.hidden = false;
+        window.cursor.hidden = true;
         window.cursor.centered = false;
         window.create();
 

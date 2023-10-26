@@ -58,6 +58,21 @@ public:
         z = ref.z;
         return *this;
     }
+
+    Vector3<T> cross(const Vector3<T> &ref) {
+        Vector3<T> result;
+        result.x = (y * ref.z) - (z * ref.y);
+        result.y = (z * ref.x) - (x * ref.z);
+        result.z = (x * ref.y) - (y * ref.x);
+        return result;
+    }
+
+    Vector3<T> &operator*(int i) {
+        x *= i;
+        y *= i;
+        z *= i;
+        return *this;
+    }
 };
 
 #endif

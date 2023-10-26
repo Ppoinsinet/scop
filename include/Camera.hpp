@@ -4,6 +4,17 @@
 #include "Vector3.hpp"
 #include "Quaternion.hpp"
 
+template <typename T>
+Vector3<T> rotate(float angle, const Vector3<T> &a, const Vector3<T> &b) {
+    Quaternion rota(angle, b);
+
+    Quaternion conjugate = rota.conjugate();
+
+    Quaternion w = rota * a * conjugate;
+
+    return Vector3<T>(w.x, w.y, w.z);
+}
+
 class Camera {
 private:
 public:
@@ -37,22 +48,25 @@ public:
         Vector3<float> tmpV = V;
         Vector3<float> tmpN = N;
 
-        // Quaternion rotaU(pitch, U); // Pitch
-        // Quaternion conju = rotaU.conjugate();
+        tmpN = rotate(pitch, tmpN, U);
+        tmpN.normalize();
 
-        // Quaternion test = rotaU * U * conju;
-        // tmpU.x = test.x;
-        // tmpU.y = test.y;
-        // tmpU.z = test.z;
+        tmpV = tmpN.cross(U);
+        tmpV.normalize();
 
-        // tmpU.normalize();
+        tmpN = rotate(yaw, tmpN, tmpV);
+        tmpN.normalize();
 
-        // std::cout << "Test avec pitch " << pitch << " et yaw " << yaw << "\n";
+        tmpU = tmpN.cross(tmpV) * -1;
+        tmpU.normalize();
+
+
+        std::cout << "Test avec pitch " << (pitch) << " et yaw " << yaw << "\n";
         
         Matrix<4, 4, float> m = (float[]) {
             tmpU.x, tmpU.y, tmpU.z, 0.0f,
-            V.x, V.y, V.z, 0.0f,
-            N.x, N.y, N.z, 0.0f,
+            tmpV.x, tmpV.y, tmpV.z, 0.0f,
+            tmpN.x, tmpN.y, tmpN.z, 0.0f,
             0.0f, 0.0f, 0.0f, 1.0f
         };
 

@@ -39,7 +39,7 @@ Matrix<4, 4, GLfloat> getProjection(GLfloat aspectRatio) {
     return (GLfloat[]) {
         d/aspectRatio,    0.0f, 0.0f, 0.0f,
         0.0f,             d,    0.0f, 0.0f,
-        0.0f,             0.0f, A, B,
+        0.0f,             0.0f, A,  B,
         0.0f,             0.0f, 1.0f, 0.0f
     };
 }
