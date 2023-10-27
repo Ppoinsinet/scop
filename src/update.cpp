@@ -47,9 +47,15 @@ Matrix<4, 4, GLfloat> getProjection(GLfloat aspectRatio) {
 extern std::vector<Vector3<GLfloat> > vertices;
 extern std::vector<unsigned int> indices;
 
+#include "Texture.hpp"
+
+Texture *tex;
+GLuint gSamplerLocation;
+
 void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
     (void)win;
     (void)data;
+    
 
     glfwGetWindowSize(win->window, &win->width, &win->height);    
     GLfloat aspectRatio = (GLfloat)win->width / (GLfloat)win->height;
@@ -84,34 +90,35 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
 
     win->camera.position = Vector3<GLfloat>(position[0], position[1], -5.0f);
 
-    (void)rotation;
-    (void)translation;
+    // Transformation matrix
+    glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (projection * win->camera.getMatrix() * rotation * translation).data);
+
+    // tex->bind(GL_TEXTURE0);
+    // glUniform1i(gSamplerLocation, 0);
+
+
+    // std::vector<Vector2<GLfloat> > texCoords;
+    // srand(1);
+    // for (unsigned int i = 0; i < vertices.size(); i++) {
+    //     texCoords.push_back(Vector2<GLfloat>((float)rand() / RAND_MAX, (float)rand() / RAND_MAX));
+    //     // std::cout << "test : \n" << texCoords[texCoords.size() - 1];
+    // }
     
-    Matrix<4, 4, GLfloat> transformationMatrix = projection * win->camera.getMatrix() * rotation * translation;
-    (void)transformationMatrix;
-    glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, transformationMatrix.data);
+    // unsigned int CBO = 0;
+    // glGenBuffers(1, &CBO);
 
-    std::vector<Vector3<GLfloat> > colors;
-    srand(1);
-    for (unsigned int i = 0; i < vertices.size(); i++)
-        colors.push_back(Vector3<GLfloat>(((GLfloat)rand()) / RAND_MAX , ((GLfloat)rand()) / RAND_MAX, ((GLfloat)rand()) / RAND_MAX));
-    
-    unsigned int CBO = 0;
-    glGenBuffers(1, &CBO);
+    // glBindBuffer(GL_ARRAY_BUFFER, CBO);
+    // glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(Vector2<GLfloat>), texCoords.data(), GL_DYNAMIC_DRAW);
 
-    glBindBuffer(GL_ARRAY_BUFFER, CBO);
-    glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(Vector3<GLfloat>), colors.data(), GL_DYNAMIC_DRAW);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3<GLfloat>), nullptr);
-    glEnableVertexAttribArray(1);
-
+    // glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vector2<GLfloat>), nullptr);
+    // glEnableVertexAttribArray(1);
 
     unsigned int VBO = 0;
     glGenBuffers(1, &VBO);
 
     // Position VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vector3<GLfloat>), getOffset((char*)vertices.data(), 0), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vector3<GLfloat>), vertices.data(), GL_DYNAMIC_DRAW);
 
     // draw
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3<GLfloat>), nullptr);
@@ -122,6 +129,6 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
     glDisableVertexAttribArray(0);
     glDeleteBuffers(1, &VBO);
 
-    glDisableVertexAttribArray(1);
-    glDeleteBuffers(1, &CBO);
+    // glDisableVertexAttribArray(1);
+    // glDeleteBuffers(1, &CBO);
 }

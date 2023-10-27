@@ -19,6 +19,7 @@
 #include <GLFW/glfw3.h>
 // #include <GL/gl.h>
 
+#include "stb_image.h"
 #include "Matrix.hpp"
 #include "Vector2.hpp"
 #include "Vector3.hpp"
@@ -43,6 +44,7 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data);
 void printCwd(void);
 
 extern GLuint gWorldLocation;
+extern GLuint gSamplerLocation;
 
 template <class T>
 void useShaders(Window<T> *window) {
@@ -57,7 +59,8 @@ void useShaders(Window<T> *window) {
     vertex.programId = programId;
     fragment.programId = programId;
 
-    glGetUniformLocation(programId, "gWorld");
+    gWorldLocation = glGetUniformLocation(programId, "gWorld");
+    gSamplerLocation = glGetUniformLocation(programId, "gSampler");
 
     glAttachShader(programId, vertex.getId());
     glAttachShader(programId, fragment.getId());

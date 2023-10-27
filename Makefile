@@ -1,5 +1,6 @@
-SRC = src/main.cpp src/class/ObjParser.cpp src/utils.cpp src/class/Face.cpp \
-		src/class/Shader.cpp src/shaders.cpp src/error.cpp src/update.cpp src/handle.cpp src/initDisplay.cpp
+SRC = src/stb_image.cpp src/main.cpp src/class/ObjParser.cpp src/utils.cpp src/class/Face.cpp \
+		src/class/Shader.cpp src/shaders.cpp src/error.cpp src/update.cpp src/handle.cpp\
+		src/initDisplay.cpp
 
 OBJS = $(SRC:.cpp=.o)
 

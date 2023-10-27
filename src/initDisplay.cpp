@@ -9,6 +9,17 @@ void onInit(Window<ObjParser *> *win, ObjParser *data) {
 
 
     vertices = data->vertices;
+    // vertices.push_back(Vector3<GLfloat>(-5, -5, -5));
+    // vertices.push_back(Vector3<GLfloat>(5, 5, -5));
+    // vertices.push_back(Vector3<GLfloat>(-5, 5, -5));
+    // vertices.push_back(Vector3<GLfloat>(5, -5, -5));
+
+    // indices.push_back(0);
+    // indices.push_back(2);
+    // indices.push_back(1);
+    // indices.push_back(0);
+    // indices.push_back(2);
+    // indices.push_back(3);
 
     for (size_t i = 0; i < data->faces.size(); i++) {
         for (int k = 0; k < 3; k++) {

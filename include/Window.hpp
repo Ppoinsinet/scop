@@ -6,6 +6,10 @@
 #include "Cursor.hpp"
 #include "Camera.hpp"
 
+
+#include "Texture.hpp"
+extern Texture *tex;
+
 template <class T = void>
 class Window {
 private:
@@ -21,7 +25,7 @@ private:
     }
 
     void clear() {
-        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClearColor(0.2, 0.2, 0.2, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
@@ -139,6 +143,9 @@ public:
         int i;
         glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &i);
         std::cout << "GL MAX TEXTURE IMAGE UNITS : " << i << "\n";
+
+        // tex = new Texture(GL_TEXTURE_2D, "bricks.jpg");
+        // tex->load();
     }
 
 
