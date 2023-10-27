@@ -59,9 +59,6 @@ void useShaders(Window<T> *window) {
     vertex.programId = programId;
     fragment.programId = programId;
 
-    gWorldLocation = glGetUniformLocation(programId, "gWorld");
-    gSamplerLocation = glGetUniformLocation(programId, "gSampler");
-
     glAttachShader(programId, vertex.getId());
     glAttachShader(programId, fragment.getId());
     glLinkProgram(programId);
@@ -74,6 +71,10 @@ void useShaders(Window<T> *window) {
     }
 
     glUseProgram(programId);
+
+    gWorldLocation = glGetUniformLocation(programId, "gWorld");
+    gSamplerLocation = glGetUniformLocation(programId, "gSampler");
+    
 }
 
 std::vector<Vector3<GLfloat> > &verticesOperations(std::vector<Vector3<GLfloat> > &vertices);

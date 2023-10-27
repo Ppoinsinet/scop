@@ -25,16 +25,12 @@ Matrix<4, 4, GLfloat> getRotation() {
     };
 }
 
-Matrix<4, 4, GLfloat> getProjection(GLfloat aspectRatio) {
+Matrix<4, 4, GLfloat> getProjection(Window<ObjParser*> *win, GLfloat aspectRatio) {
 
-    GLfloat FOV = 45.0f;
-    GLfloat d = 1.0f/((tanf(toRadian(FOV)/ 2.0f)));
+    GLfloat d = 1.0f/((tanf(toRadian(win->camera.FOV)/ 2.0f)));
 
-    float nearZ = 1.0f;
-    float farZ = 12.0f;
-
-    float A = (-farZ - nearZ) / (nearZ - farZ);
-    float B = (2.0f * farZ * nearZ) / (nearZ - farZ);
+    float A = (-win->camera.farZ - win->camera.nearZ) / (win->camera.nearZ - win->camera.farZ);
+    float B = (2.0f * win->camera.farZ * win->camera.nearZ) / (win->camera.nearZ - win->camera.farZ);
 
     return (GLfloat[]) {
         d/aspectRatio,    0.0f, 0.0f, 0.0f,
@@ -61,7 +57,7 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
     GLfloat aspectRatio = (GLfloat)win->width / (GLfloat)win->height;
 
     Matrix<4U, 4U, GLfloat> rotation = getRotation();
-    Matrix<4U, 4U, GLfloat> projection = getProjection(aspectRatio);
+    Matrix<4U, 4U, GLfloat> projection = getProjection(win, aspectRatio);
 
     float minX = vertices[0].x;
     float maxX = minX;
@@ -88,30 +84,30 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
         0.0f, 0.0f, 0.0f, 1.0f
     };
 
-    win->camera.position = Vector3<GLfloat>(position[0], position[1], -5.0f);
+    win->camera.position = Vector3<GLfloat>(position[0], position[1], position[2] - 5.0f);
 
     // Transformation matrix
     glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (projection * win->camera.getMatrix() * rotation * translation).data);
 
-    // tex->bind(GL_TEXTURE0);
-    // glUniform1i(gSamplerLocation, 0);
+    tex->bind(GL_TEXTURE0);
+    glUniform1i(gSamplerLocation, 0);
 
 
-    // std::vector<Vector2<GLfloat> > texCoords;
-    // srand(1);
-    // for (unsigned int i = 0; i < vertices.size(); i++) {
-    //     texCoords.push_back(Vector2<GLfloat>((float)rand() / RAND_MAX, (float)rand() / RAND_MAX));
-    //     // std::cout << "test : \n" << texCoords[texCoords.size() - 1];
-    // }
+    std::vector<Vector2<GLfloat> > texCoords;
+    srand(1);
+    for (unsigned int i = 0; i < vertices.size(); i++) {
+        texCoords.push_back(Vector2<GLfloat>((float)rand() / RAND_MAX, (float)rand() / RAND_MAX));
+        // std::cout << "test : \n" << texCoords[texCoords.size() - 1];
+    }
     
-    // unsigned int CBO = 0;
-    // glGenBuffers(1, &CBO);
+    unsigned int CBO = 0;
+    glGenBuffers(1, &CBO);
 
-    // glBindBuffer(GL_ARRAY_BUFFER, CBO);
-    // glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(Vector2<GLfloat>), texCoords.data(), GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, CBO);
+    glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(Vector2<GLfloat>), texCoords.data(), GL_DYNAMIC_DRAW);
 
-    // glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vector2<GLfloat>), nullptr);
-    // glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vector2<GLfloat>), nullptr);
+    glEnableVertexAttribArray(1);
 
     unsigned int VBO = 0;
     glGenBuffers(1, &VBO);
@@ -129,6 +125,6 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
     glDisableVertexAttribArray(0);
     glDeleteBuffers(1, &VBO);
 
-    // glDisableVertexAttribArray(1);
-    // glDeleteBuffers(1, &CBO);
+    glDisableVertexAttribArray(1);
+    glDeleteBuffers(1, &CBO);
 }

@@ -14,8 +14,11 @@ void ObjParser::addFace(std::vector<std::string> line, int smoothingGroup) {
     if (line.size() < 4)
         throw "Incorrect input for face";
 
+    for (unsigned int i = 3; i < line.size(); i++) {
+        faces.push_back(Face(std::stoi(line[1]) - 1, std::stoi(line[i - 1]) - 1, std::stoi(line[i]) - 1, smoothingGroup));
+    }
+
     // todo: make it unsigned int or check vertices array bounds
-    faces.push_back(Face(std::stoi(line[1]) - 1, std::stoi(line[2]) - 1, std::stoi(line[3]) - 1, smoothingGroup));
 }
 
 void ObjParser::addVertice(std::vector<std::string> line) {

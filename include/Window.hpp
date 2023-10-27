@@ -128,10 +128,10 @@ public:
         // glfwGetFramebufferSize(window, &width, &height);
         // glViewport(0, 0, width, height);
 
-        glEnable(GL_CULL_FACE);
+        // glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
-        glFrontFace(GL_CW);
-        glCullFace(GL_BACK);
+        // glFrontFace(GL_CW);
+        // glCullFace(GL_BACK);
 
         unsigned int VAO = 0;
         glGenVertexArrays(1, &VAO);
@@ -144,8 +144,8 @@ public:
         glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &i);
         std::cout << "GL MAX TEXTURE IMAGE UNITS : " << i << "\n";
 
-        // tex = new Texture(GL_TEXTURE_2D, "bricks.jpg");
-        // tex->load();
+        tex = new Texture(GL_TEXTURE_2D, "bricks.jpg");
+        tex->load();
     }
 
 
