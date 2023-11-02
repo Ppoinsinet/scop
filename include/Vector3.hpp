@@ -67,11 +67,12 @@ public:
         return result;
     }
 
-    Vector3<T> &operator*(int i) {
-        x *= i;
-        y *= i;
-        z *= i;
-        return *this;
+    Vector3<T> operator*(int i) {
+        return Vector3<T>(x * i, y * i, z * i);
+    }
+
+    Vector3<T> operator*(float i) {
+        return Vector3<T>(x * i, y * i, z * i);
     }
 };
 

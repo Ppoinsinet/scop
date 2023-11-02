@@ -44,12 +44,16 @@ private:
 
         Vector2<double> tmp;
         glfwGetCursorPos(window, &tmp.x, &tmp.y);
+        tmp.x -= width / 2;
+        tmp.y -= height / 2;
+        // std::cout << "test : " << tmp.x << " et " << tmp.y << "\n";
         if (tmp.x != cursor.position.x || tmp.y != cursor.position.y) {
             if (cursor.onMouvement)
                 cursor.onMouvement(this, tmp, cursor.position);
-            cursor.position = tmp;
             if (this->cursor.centered == true)
                 centerCursor();
+            else
+                cursor.position = tmp;
         }
     }
 
@@ -89,6 +93,11 @@ public:
         
     }
 
+    Window(T val) : window(nullptr), monitor(nullptr), running(false), resizable(true), height(500), width(500), title("My super window"), fpsLimit(60), updateFunction(nullptr), initFunction(nullptr), closeFunction(nullptr), data(val)
+    {
+        cursor.onMouvement = onMouvement;
+        keyHandle[GLFW_KEY_ESCAPE] = defaultOnEscape;
+    }
 
     Window() : window(nullptr), monitor(nullptr), running(false), resizable(true), height(500), width(500), title("My super window"), fpsLimit(60), updateFunction(nullptr), initFunction(nullptr), closeFunction(nullptr), data(nullptr)
     {

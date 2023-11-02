@@ -129,6 +129,25 @@ public:
         }
         return r;
     }
+    
+    Matrix<N, M, T> operator*(float val) const {
+        Matrix<N, M, T> r;
+        
+        for (unsigned int x = 0; x < N * M; x++) {
+            r[x] = val * data[x];
+        }
+        return r;
+    }
+
+    Matrix<N, M, T> operator*(int val) const {
+        Matrix<N, M, T> r;
+        
+        for (unsigned int x = 0; x < N * M; x++) {
+            r[x] = val * data[x];
+        }
+        return r;
+    }
+
 
     template<unsigned int X>
     Matrix<N, X, T> operator*(const Matrix<M, X, T> &ref) const {

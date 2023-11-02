@@ -48,17 +48,28 @@ public:
         Vector3<float> tmpV = V;
         Vector3<float> tmpN = N;
 
-        tmpN = rotate(pitch, tmpN, U);
-        tmpN.normalize();
+        if (pitch != 0.0f) {
+            tmpN = rotate(pitch, tmpN, U);
+            tmpN.normalize();
 
-        tmpV = tmpN.cross(U);
-        tmpV.normalize();
+            tmpV = tmpN.cross(U);
+            tmpV.normalize();
+        }
 
-        tmpN = rotate(yaw, tmpN, tmpV);
-        tmpN.normalize();
+        if (yaw != 0.0f) {
+            tmpN = rotate(yaw, tmpN, tmpV);
+            tmpN.normalize();
 
-        tmpU = tmpN.cross(tmpV) * -1;
-        tmpU.normalize();
+            tmpU = tmpN.cross(tmpV) * -1;
+            tmpU.normalize();
+        }
+
+        U = tmpU;
+        V = tmpV;
+        N = tmpN;
+        
+        pitch = 0.0f;
+        yaw = 0.0f;
 
         // std::cout << "tmpU : \n" << tmpU << "\n\n";
         // std::cout << "tmpV : \n" << tmpV << "\n\n";

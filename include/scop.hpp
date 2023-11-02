@@ -29,14 +29,15 @@
 #include "Window.hpp"
 #include "Shader.hpp"
 #include "Camera.hpp"
+#include "VAO.hpp"
 
 std::vector<std::string> split (const std::string &s, std::string delim);
 
-void onPress(Window<ObjParser *> *win, ObjParser *data, int key);
+void onPress(Window<VAO *> *win, VAO *data, int key);
 
 
-void onInit(Window<ObjParser *> *win, ObjParser *data);
-void onUpdate(Window<ObjParser *> *win, ObjParser *data);
+void onInit(Window<VAO *> *win, VAO *data);
+void onUpdate(Window<VAO *> *win, VAO *data);
 
 
 #define VERTEX_SHADER_FILEPATH "./vertex.shader"

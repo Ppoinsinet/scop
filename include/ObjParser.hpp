@@ -1,3 +1,6 @@
+#ifndef OBJPARSER_HPP
+#define OBJPARSER_HPP
+
 #include <scop.hpp>
 
 class ObjParser {
@@ -12,3 +15,5 @@ class ObjParser {
         ObjParser(std::string filePath);
         ~ObjParser();
 };
+
+#endif

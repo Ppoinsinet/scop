@@ -25,7 +25,8 @@ Matrix<4, 4, GLfloat> getRotation() {
     };
 }
 
-Matrix<4, 4, GLfloat> getProjection(Window<ObjParser*> *win, GLfloat aspectRatio) {
+template<typename T>
+Matrix<4, 4, GLfloat> getProjection(Window<T*> *win, GLfloat aspectRatio) {
 
     GLfloat d = 1.0f/((tanf(toRadian(win->camera.FOV)/ 2.0f)));
 
@@ -40,41 +41,38 @@ Matrix<4, 4, GLfloat> getProjection(Window<ObjParser*> *win, GLfloat aspectRatio
     };
 }
 
-extern std::vector<Vector3<GLfloat> > vertices;
-extern std::vector<unsigned int> indices;
-
 #include "Texture.hpp"
 
 Texture *tex;
 GLuint gSamplerLocation;
+GLuint gWorldLocation;
 
-void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
+void onUpdate(Window<VAO *> *win, VAO *data) {
     (void)win;
     (void)data;
     
-
     glfwGetWindowSize(win->window, &win->width, &win->height);    
     GLfloat aspectRatio = (GLfloat)win->width / (GLfloat)win->height;
 
     Matrix<4U, 4U, GLfloat> rotation = getRotation();
     Matrix<4U, 4U, GLfloat> projection = getProjection(win, aspectRatio);
 
-    float minX = vertices[0].x;
+    float minX = data->vertices[0].x;
     float maxX = minX;
 
-    float minZ = vertices[0].z;
+    float minZ = data->vertices[0].z;
     float maxZ = minZ;
 
-    for (unsigned int i  = 1; i < vertices.size(); i++) {
-        if (vertices[i].x < minX)
-            minX = vertices[i].x;
-        if (vertices[i].x > maxX)
-            maxX = vertices[i].x;
+    for (unsigned int i = 1; i < data->vertices.size(); i++) {
+        if (data->vertices[i].x < minX)
+            minX = data->vertices[i].x;
+        if (data->vertices[i].x > maxX)
+            maxX = data->vertices[i].x;
 
-        if (vertices[i].z < minZ)
-            minZ = vertices[i].z;
-        if (vertices[i].z > maxZ)
-            maxZ = vertices[i].z;
+        if (data->vertices[i].z < minZ)
+            minZ = data->vertices[i].z;
+        if (data->vertices[i].z > maxZ)
+            maxZ = data->vertices[i].z;
     }
 
     Matrix<4, 4, GLfloat> translation = (GLfloat[]) {
@@ -92,39 +90,22 @@ void onUpdate(Window<ObjParser *> *win, ObjParser *data) {
     tex->bind(GL_TEXTURE0);
     glUniform1i(gSamplerLocation, 0);
 
-
     std::vector<Vector2<GLfloat> > texCoords;
     srand(1);
-    for (unsigned int i = 0; i < vertices.size(); i++) {
+    for (unsigned int i = 0; i < data->vertices.size(); i++) {
         texCoords.push_back(Vector2<GLfloat>((float)rand() / RAND_MAX, (float)rand() / RAND_MAX));
-        // std::cout << "test : \n" << texCoords[texCoords.size() - 1];
     }
-    
-    unsigned int CBO = 0;
-    glGenBuffers(1, &CBO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, CBO);
+    // Bind CBO
+    glBindBuffer(GL_ARRAY_BUFFER, data->CBO);
     glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(Vector2<GLfloat>), texCoords.data(), GL_DYNAMIC_DRAW);
-
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vector2<GLfloat>), nullptr);
     glEnableVertexAttribArray(1);
 
-    unsigned int VBO = 0;
-    glGenBuffers(1, &VBO);
+    data->preDraw();
 
-    // Position VBO
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vector3<GLfloat>), vertices.data(), GL_DYNAMIC_DRAW);
-
-    // draw
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3<GLfloat>), nullptr);
-    glEnableVertexAttribArray(0);
-
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, data->indices.size(), GL_UNSIGNED_INT, 0);
 
     glDisableVertexAttribArray(0);
-    glDeleteBuffers(1, &VBO);
-
     glDisableVertexAttribArray(1);
-    glDeleteBuffers(1, &CBO);
 }
