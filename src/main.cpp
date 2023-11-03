@@ -5,6 +5,7 @@
 
 #include <math.h>
 #include "VAO.hpp"
+#include "Scene.hpp"
 
 Matrix<4, 1, GLfloat> position;
 std::vector<unsigned int> indices;
@@ -18,12 +19,14 @@ int main(int ac, char **av) {
     }
 
     position.Identity();
-    Window<VAO *> window;
+    Window<Scene> window;
 
     ObjParser parser(av[1]);
-    std::cout << "coucou\n";
+    
+    Scene scene;
     VAO obj(parser);
-    window.data = &obj;
+    scene.listVAO.push_back(obj);
+    window.data = &scene;
 
     std::cout << obj.vertices.size() << " vertices\n";
 
@@ -50,6 +53,7 @@ int main(int ac, char **av) {
         window.width = WINDOW_WIDTH;
         window.cursor.hidden = true;
         window.cursor.centered = true;
+        window.cursor.onMouvement = Scene::onMouvement;
         window.create();
 
 
@@ -58,7 +62,6 @@ int main(int ac, char **av) {
         window.updateFunction = onUpdate;
 
         obj.init();
-        std::cout << "hjh\n";
         window.start();
     }
     catch(const std::exception& e)

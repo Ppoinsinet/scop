@@ -45,14 +45,14 @@ public:
         return *this;
     }
 
-    Vector3 &operator=(const MatrixType &ref) {
+    Vector3<T> &operator=(const MatrixType &ref) {
         x = ref[0];
         y = ref[1];
         z = ref[2];
         return *this;
     }
 
-    Vector3 &operator=(const Vector3<T> &ref) {
+    Vector3<T> &operator=(const Vector3<T> &ref) {
         x = ref.x;
         y = ref.y;
         z = ref.z;

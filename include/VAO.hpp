@@ -50,8 +50,6 @@ public:
         // Bind IBO
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-
-        std::cout << "predraw " << vertices.size() << " vertices and " << indices.size() << " indices\n";
     }
 
     ~VAO() {

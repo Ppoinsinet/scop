@@ -14,7 +14,7 @@ template <class T = void>
 class Window {
 private:
 
-    static void defaultOnEscape(Window *a, T data, int key) {
+    static void defaultOnEscape(Window<T> *a, T *data, int key) {
         (void)data;
         (void)key;
         a->running = false;
@@ -36,7 +36,8 @@ private:
     void input() {
         glfwPollEvents();
 
-        typename std::map<int, keyCallbackFunction>::iterator it = keyHandle.begin();
+
+        typename std::map<int, keyCallback>::iterator it = keyHandle.begin();
         for (; it != keyHandle.end(); it++) {
             if (glfwGetKey(window, it->first) == GLFW_PRESS && it->second != nullptr)
                 it->second(this, data, it->first);
@@ -46,7 +47,6 @@ private:
         glfwGetCursorPos(window, &tmp.x, &tmp.y);
         tmp.x -= width / 2;
         tmp.y -= height / 2;
-        // std::cout << "test : " << tmp.x << " et " << tmp.y << "\n";
         if (tmp.x != cursor.position.x || tmp.y != cursor.position.y) {
             if (cursor.onMouvement)
                 cursor.onMouvement(this, tmp, cursor.position);
@@ -58,8 +58,8 @@ private:
     }
 
 public:
-    typedef void(*callbackFunction)(Window*, T);
-    typedef void(*keyCallbackFunction)(Window*, T, int);
+    typedef void(*hookCallback)(Window*, T*);
+    typedef void(*keyCallback)(Window*, T*, int);
 
     GLFWwindow *window;
     GLFWmonitor *monitor;
@@ -71,37 +71,22 @@ public:
     Vector2<int> position;
 
     int fpsLimit;
-    std::map<int, keyCallbackFunction> keyHandle;
+    std::map<int, keyCallback> keyHandle;
 
-    callbackFunction updateFunction;
-    callbackFunction initFunction;
-    callbackFunction closeFunction;
+    hookCallback updateFunction;
+    hookCallback initFunction;
+    hookCallback closeFunction;
 
-    T data;
+    T *data;
     Cursor cursor;
-    Camera camera;
 
-    static void onMouvement(void *data, Vector2<double> newPos, Vector2<double> oldPos) {
-        Vector2<double> diff;
-        diff.x = newPos.x - oldPos.x;
-        diff.y = newPos.y - oldPos.y;
-        // std::cout << " test " << diff.x << " et " << diff.y << "\n";
-
-        Window<T> *win = static_cast<Window<T>*>(data);
-        win->camera.pitch += diff.y;
-        win->camera.yaw += diff.x;
-        
-    }
-
-    Window(T val) : window(nullptr), monitor(nullptr), running(false), resizable(true), height(500), width(500), title("My super window"), fpsLimit(60), updateFunction(nullptr), initFunction(nullptr), closeFunction(nullptr), data(val)
+    Window(const T &val) : window(nullptr), monitor(nullptr), running(false), resizable(true), height(500), width(500), title("My super window"), fpsLimit(60), updateFunction(nullptr), initFunction(nullptr), closeFunction(nullptr), data(&val)
     {
-        cursor.onMouvement = onMouvement;
         keyHandle[GLFW_KEY_ESCAPE] = defaultOnEscape;
     }
 
     Window() : window(nullptr), monitor(nullptr), running(false), resizable(true), height(500), width(500), title("My super window"), fpsLimit(60), updateFunction(nullptr), initFunction(nullptr), closeFunction(nullptr), data(nullptr)
     {
-        cursor.onMouvement = onMouvement;
         keyHandle[GLFW_KEY_ESCAPE] = defaultOnEscape;
     }
 
@@ -169,7 +154,8 @@ public:
         
         if (cursor.hidden == true)
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-        if (cursor.centered == true)
+        glfwPollEvents();
+        if (cursor.centered == true || cursor.hidden == true)
             centerCursor();
 
         initGlew();
@@ -196,7 +182,6 @@ public:
                     updateFunction(this, data);
 
                 input();
-
 
                 lastTime = time;
                 draw();

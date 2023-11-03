@@ -4,17 +4,6 @@
 #include "Vector3.hpp"
 #include "Quaternion.hpp"
 
-template <typename T>
-Vector3<T> rotate(float angle, const Vector3<T> &a, const Vector3<T> &b) {
-    Quaternion rota(angle, b);
-
-    Quaternion conjugate = rota.conjugate();
-
-    Quaternion w = rota * a * conjugate;
-
-    return Vector3<T>(w.x, w.y, w.z);
-}
-
 class Camera {
 private:
 public:
@@ -43,37 +32,42 @@ public:
         N = Vector3<float>(0.0f, 0.0f, 1.0f);
     }
 
-    Matrix<4, 4, float> getMatrix() {
+    Matrix<3, 3, float> getRotatedVectors() {
+        Matrix<3, 3, float> result;
+
         Vector3<float> tmpU = U;
         Vector3<float> tmpV = V;
         Vector3<float> tmpN = N;
 
-        if (pitch != 0.0f) {
-            tmpN = rotate(pitch, tmpN, U);
-            tmpN.normalize();
+        // tmpN = rotate(yaw, tmpN, V);
+        // tmpN.normalize();
 
-            tmpV = tmpN.cross(U);
-            tmpV.normalize();
-        }
+        // tmpU = tmpN.cross(tmpV);
+        // tmpU.normalize();
 
-        if (yaw != 0.0f) {
-            tmpN = rotate(yaw, tmpN, tmpV);
-            tmpN.normalize();
+        // tmpN = rotate(pitch, tmpN, tmpU);
+        // tmpN.normalize();
 
-            tmpU = tmpN.cross(tmpV) * -1;
-            tmpU.normalize();
-        }
+        // tmpV = tmpN.cross(tmpU);
+        // if (tmpV.y < 0)
+        //     tmpV = tmpV * -1;
+        // tmpV.normalize();
 
-        U = tmpU;
-        V = tmpV;
-        N = tmpN;
-        
-        pitch = 0.0f;
-        yaw = 0.0f;
 
-        // std::cout << "tmpU : \n" << tmpU << "\n\n";
-        // std::cout << "tmpV : \n" << tmpV << "\n\n";
-        // std::cout << "tmpN : \n" << tmpN << "\n\n";
+        result = (float[]) {
+            tmpU.x, tmpV.x, tmpN.x,
+            tmpU.y, tmpV.y, tmpN.y,
+            tmpU.z, tmpV.z, tmpN.z
+        };
+
+        return result;
+    }
+
+    Matrix<4, 4, float> getMatrix() {
+        Matrix<3, 3, float> rotated = getRotatedVectors();
+        Vector3<float> tmpU = rotated.getColumn(0);
+        Vector3<float> tmpV = rotated.getColumn(1);
+        Vector3<float> tmpN = rotated.getColumn(2);
         
         Matrix<4, 4, float> m = (float[]) {
             tmpU.x, tmpU.y, tmpU.z, 0.0f,

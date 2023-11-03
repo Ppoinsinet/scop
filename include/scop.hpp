@@ -24,20 +24,32 @@
 #include "Vector2.hpp"
 #include "Vector3.hpp"
 
+#include "Quaternion.hpp"
+template <typename T>
+Vector3<T> rotate(float angle, const Vector3<T> &a, const Vector3<T> &b) {
+    Quaternion rota(angle, b);
+
+    Quaternion conjugate = rota.conjugate();
+
+    Quaternion w = rota * a * conjugate;
+
+    return Vector3<T>(w.x, w.y, w.z);
+}
+
 #include "Face.hpp"
 #include "ObjParser.hpp"
 #include "Window.hpp"
 #include "Shader.hpp"
-#include "Camera.hpp"
 #include "VAO.hpp"
+#include "Scene.hpp"
+
+#include "Camera.hpp"
+
 
 std::vector<std::string> split (const std::string &s, std::string delim);
 
-void onPress(Window<VAO *> *win, VAO *data, int key);
-
-
-void onInit(Window<VAO *> *win, VAO *data);
-void onUpdate(Window<VAO *> *win, VAO *data);
+void onPress(Window<Scene> *win, Scene *data, int key);
+void onUpdate(Window<Scene> *win, Scene *data);
 
 
 #define VERTEX_SHADER_FILEPATH "./vertex.shader"

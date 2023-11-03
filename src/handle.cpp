@@ -1,38 +1,36 @@
 #include "scop.hpp"
 
-extern std::vector<Vector3<GLfloat> > vertices;
-extern Vector3<GLfloat> position;
+#include "Scene.hpp"
 
-void onPress(Window<VAO *> *win, VAO *data, int key) {
+extern std::vector<Vector3<GLfloat> > vertices;
+
+void onPress(Window<Scene> *win, Scene *data, int key) {
     (void)win;
     (void)data;
     static float val = 0.02;
 
+    Matrix<3, 3, float> rotatedVectors = data->camera.getRotatedVectors();
+
+
     if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_D) {
         
-        position += win->camera.U * val;
+        data->camera.position += rotatedVectors.getColumn(0) * val;
     }
     else if (key == GLFW_KEY_LEFT || key == GLFW_KEY_A) {
-        position -= win->camera.U * val;
+        data->camera.position -= rotatedVectors.getColumn(0) * val;
     }
     else if (key == GLFW_KEY_UP) {
-        position += win->camera.V * val;
+        data->camera.position += rotatedVectors.getColumn(1) * val;
     }
     else if (key == GLFW_KEY_DOWN) {
-        position -= win->camera.V * val;
+        data->camera.position -= rotatedVectors.getColumn(1) * val;
     }
     else if (key == GLFW_KEY_W) {
-        position += win->camera.N * val;
+        data->camera.position += rotatedVectors.getColumn(2) * val;
     }
     else if (key == GLFW_KEY_S) {
-        position -= win->camera.N * val;
-    } else {
-        ObjParser tmp("ressources/42.obj");
-        VAO *test = new VAO(tmp);
-        test->init();
-        win->data = test;
+        data->camera.position -= rotatedVectors.getColumn(2) * val;
+    } else
         return ;
-    }
     // scale += 0.22;
-    std::cout << "press :\n" << position << "\n";
 }

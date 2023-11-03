@@ -6,6 +6,7 @@
 class Cursor {
 private:
 public:
+
     Vector2<double> position;
     bool hidden;
     bool centered;
