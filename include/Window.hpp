@@ -142,7 +142,6 @@ public:
         tex->load();
     }
 
-
     void create() {
         initGlfw();
 

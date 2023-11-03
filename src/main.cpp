@@ -10,6 +10,26 @@
 Matrix<4, 1, GLfloat> position;
 std::vector<unsigned int> indices;
 
+void initWindow(Window<Scene> *win) {
+    win->keyHandle[GLFW_KEY_UP] = onPress;
+    win->keyHandle[GLFW_KEY_DOWN] = onPress;
+    win->keyHandle[GLFW_KEY_RIGHT] = onPress;
+    win->keyHandle[GLFW_KEY_LEFT] = onPress;
+
+    win->keyHandle[GLFW_KEY_A] = onPress;
+    win->keyHandle[GLFW_KEY_D] = onPress;
+    win->keyHandle[GLFW_KEY_W] = onPress;
+    win->keyHandle[GLFW_KEY_S] = onPress;
+
+    win->keyHandle[GLFW_KEY_K] = onPress;
+
+    win->fpsLimit = 60;
+    win->width = WINDOW_WIDTH;
+    win->cursor.hidden = true;
+    win->cursor.centered = true;
+    win->cursor.onMouvement = Scene::onMouvement;
+}
+
 int main(int ac, char **av) {
     
     printCwd();
@@ -21,12 +41,7 @@ int main(int ac, char **av) {
     position.Identity();
     Window<Scene> window;
 
-    ObjParser parser(av[1]);
-    
     Scene scene;
-    VAO *obj = new VAO(parser);
-    scene.listVAO.push_back(obj);
-    // scene.listVAO = &obj;
     window.data = &scene;
     
     // const GLubyte *i = glGetString(GL_SHADING_LANGUAGE_VERSION);
@@ -34,32 +49,27 @@ int main(int ac, char **av) {
     try
     {
         // youtube video : https://www.youtube.com/watch?v=LhQ85bPCAJ8
-
-        window.keyHandle[GLFW_KEY_UP] = onPress;
-        window.keyHandle[GLFW_KEY_DOWN] = onPress;
-        window.keyHandle[GLFW_KEY_RIGHT] = onPress;
-        window.keyHandle[GLFW_KEY_LEFT] = onPress;
-
-        window.keyHandle[GLFW_KEY_A] = onPress;
-        window.keyHandle[GLFW_KEY_D] = onPress;
-        window.keyHandle[GLFW_KEY_W] = onPress;
-        window.keyHandle[GLFW_KEY_S] = onPress;
-
-        window.keyHandle[GLFW_KEY_K] = onPress;
-
-        window.fpsLimit = 60;
-        window.width = WINDOW_WIDTH;
-        window.cursor.hidden = true;
-        window.cursor.centered = true;
-        window.cursor.onMouvement = Scene::onMouvement;
+        initWindow(&window);
         window.create();
+
+        VAO *obj = new VAO(av[1]);
+        VAO *obj2 = new VAO("ressources/42.obj");
+        scene.listVAO.push_back(obj);
+        scene.listVAO.push_back(obj2);
+
+        obj->init();
+        obj2->init();
+
+        obj2->position.y = 2;
+        obj2->position.x = 2;
+
+        obj2->scale = 0.1f;
 
 
         useShaders(&window);
 
         window.updateFunction = onUpdate;
 
-        obj->init();
         window.start();
     }
     catch(const std::exception& e)

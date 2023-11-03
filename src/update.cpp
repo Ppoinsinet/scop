@@ -45,17 +45,14 @@ Texture *tex;
 GLuint gSamplerLocation;
 GLuint gWorldLocation;
 
-void onUpdate(Window<Scene> *win, Scene *data) {
+void printVAO(Window<Scene> *win, Scene *data, unsigned int index) {
     (void)win;
-    (void)data;
-    
-    glfwGetWindowSize(win->window, &win->width, &win->height);    
+
     GLfloat aspectRatio = (GLfloat)win->width / (GLfloat)win->height;
 
     Matrix<4U, 4U, GLfloat> rotation = getRotation();
     Matrix<4U, 4U, GLfloat> projection = getProjection(win, aspectRatio);
-
-    VAO *vao = data->listVAO[data->listVAO.size() - 1];
+    VAO *vao = data->listVAO[index];
     // vao->print();
 
     float minX = vao->vertices[0].x;
@@ -76,17 +73,31 @@ void onUpdate(Window<Scene> *win, Scene *data) {
             maxZ = vao->vertices[i].z;
     }
 
-    Matrix<4, 4, GLfloat> translation = (GLfloat[]) {
+    Matrix<4, 4, GLfloat> centeredTranslation = (GLfloat[]) {
         1.0f, 0.0f, 0.0f, -(maxX + minX) / 2,
         0.0f, 1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 1.0f, -(maxZ + minZ) / 2,
         0.0f, 0.0f, 0.0f, 1.0f
     };
 
+    Matrix<4, 4, GLfloat> position = (GLfloat[]) {
+        1.0f, 0.0f, 0.0f, vao->position.x,
+        0.0f, 1.0f, 0.0f, vao->position.y,
+        0.0f, 0.0f, 1.0f, vao->position.z,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+
+    Matrix<4, 4, GLfloat> scale = (GLfloat[]) {
+        vao->scale, 0.0f, 0.0f, 0.0f,
+        0.0f, vao->scale, 0.0f, 0.0f,
+        0.0f, 0.0f, vao->scale, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+
     // data->camera.position = Vector3<GLfloat>(position[0], position[1], position[2] - 5.0f);
 
     // Transformation matrix
-    glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (projection * data->camera.getMatrix() * rotation * translation).data);
+    glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (projection * data->camera.getMatrix() * position * scale * rotation * centeredTranslation).data);
 
     tex->bind(GL_TEXTURE0);
     glUniform1i(gSamplerLocation, 0);
@@ -109,4 +120,15 @@ void onUpdate(Window<Scene> *win, Scene *data) {
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
+}
+
+void onUpdate(Window<Scene> *win, Scene *data) {
+    (void)win;
+    (void)data;
+    
+    glfwGetWindowSize(win->window, &win->width, &win->height);        
+
+    for (unsigned int i = 0; i < data->listVAO.size(); i++)
+        printVAO(win, data, i);
+    
 }

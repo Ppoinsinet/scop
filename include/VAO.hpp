@@ -12,9 +12,24 @@ public:
     std::vector<unsigned int> indices;
     std::vector<Vector2<GLfloat> > textureCoords;
 
+    Vector3<GLfloat> position;
+    float scale;
+
     unsigned int CBO; // Colors buffer object
     unsigned int VBO; // Vertex buffer object
     unsigned int IBO; // Indices buffer object
+
+    VAO(const std::string &path) {
+        scale = 1.0f;
+        ObjParser t(path);
+        vertices = t.vertices;
+
+        for (size_t i = 0; i < t.faces.size(); i++) {
+            for (int k = 0; k < 3; k++) {
+                indices.push_back(t.faces[i].verticesIndex[k]);
+            }
+        }
+    }
 
     VAO(const VAO &ref) {
         gSamplerLocation = ref.gSamplerLocation;
@@ -30,6 +45,7 @@ public:
 
     VAO(const ObjParser &data) {
 
+        scale = 1.0f;
         vertices = data.vertices;
 
         for (size_t i = 0; i < data.faces.size(); i++) {
