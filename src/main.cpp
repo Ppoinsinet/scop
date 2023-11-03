@@ -24,12 +24,10 @@ int main(int ac, char **av) {
     ObjParser parser(av[1]);
     
     Scene scene;
-    VAO obj(parser);
+    VAO *obj = new VAO(parser);
     scene.listVAO.push_back(obj);
+    // scene.listVAO = &obj;
     window.data = &scene;
-
-    std::cout << obj.vertices.size() << " vertices\n";
-
     
     // const GLubyte *i = glGetString(GL_SHADING_LANGUAGE_VERSION);
     // std::cout << "shading language version : " << i << "\n";
@@ -61,7 +59,7 @@ int main(int ac, char **av) {
 
         window.updateFunction = onUpdate;
 
-        obj.init();
+        obj->init();
         window.start();
     }
     catch(const std::exception& e)

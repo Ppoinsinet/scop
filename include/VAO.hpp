@@ -16,6 +16,17 @@ public:
     unsigned int VBO; // Vertex buffer object
     unsigned int IBO; // Indices buffer object
 
+    VAO(const VAO &ref) {
+        gSamplerLocation = ref.gSamplerLocation;
+        tex = ref.tex;
+        vertices = ref.vertices;
+        indices = ref.indices;
+        textureCoords = ref.textureCoords;
+
+        CBO = ref.CBO;
+        VBO = ref.VBO;
+        IBO = ref.IBO;
+    }
 
     VAO(const ObjParser &data) {
 
@@ -26,6 +37,30 @@ public:
                 indices.push_back(data.faces[i].verticesIndex[k]);
             }
         }
+    }
+
+    void print() {
+        std::cout << "gSampler : " << gSamplerLocation << "\n";
+        std::cout << "tex : " << tex << "\n";
+        std::cout << "vertices : " << vertices.size() << "\n";
+        std::cout << "indices : " << indices.size() << "\n";
+        std::cout << "texCoords : " << textureCoords.size() << "\n";
+        std::cout << "CBO : " << CBO << "\n";
+        std::cout << "IBO : " << IBO << "\n";
+        std::cout << "VBO : " << VBO << "\n";
+    }
+
+    VAO &operator=(const VAO &ref) {
+        gSamplerLocation = ref.gSamplerLocation;
+        tex = ref.tex;
+        vertices = ref.vertices;
+        indices = ref.indices;
+        textureCoords = ref.textureCoords;
+
+        CBO = ref.CBO;
+        VBO = ref.VBO;
+        IBO = ref.IBO;
+        return *this;
     }
 
     void init() {

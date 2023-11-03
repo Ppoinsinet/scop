@@ -22,7 +22,7 @@ public:
     float roll; // Rotation around Z
 
     Camera() {
-        position = Vector3<float>(0.0f, 0.0f, 0.0f);
+        position = Vector3<float>(0.0f, 0.0f, -5.0f);
         nearZ = 0.01f;
         farZ = 10.f;
         FOV = 45;
@@ -32,6 +32,29 @@ public:
         N = Vector3<float>(0.0f, 0.0f, 1.0f);
     }
 
+    Camera(const Camera &ref) {
+        position = ref.position;
+        nearZ = ref.nearZ;
+        farZ = ref.farZ;
+        FOV = ref.FOV;
+
+        U = ref.U;
+        V = ref.V;
+        N = ref.N;
+    }
+
+    Camera &operator=(const Camera &ref) {
+        position = ref.position;
+        nearZ = ref.nearZ;
+        farZ = ref.farZ;
+        FOV = ref.FOV;
+
+        U = ref.U;
+        V = ref.V;
+        N = ref.N;
+        return *this;
+    }
+
     Matrix<3, 3, float> getRotatedVectors() {
         Matrix<3, 3, float> result;
 
@@ -39,19 +62,19 @@ public:
         Vector3<float> tmpV = V;
         Vector3<float> tmpN = N;
 
-        // tmpN = rotate(yaw, tmpN, V);
-        // tmpN.normalize();
+        tmpN = rotate(yaw, tmpN, V);
+        tmpN.normalize();
 
-        // tmpU = tmpN.cross(tmpV);
-        // tmpU.normalize();
+        tmpU = tmpN.cross(tmpV);
+        tmpU.normalize();
 
-        // tmpN = rotate(pitch, tmpN, tmpU);
-        // tmpN.normalize();
+        tmpN = rotate(pitch, tmpN, tmpU);
+        tmpN.normalize();
 
-        // tmpV = tmpN.cross(tmpU);
-        // if (tmpV.y < 0)
-        //     tmpV = tmpV * -1;
-        // tmpV.normalize();
+        tmpV = tmpN.cross(tmpU);
+        if (tmpV.y < 0)
+            tmpV = tmpV * -1;
+        tmpV.normalize();
 
 
         result = (float[]) {

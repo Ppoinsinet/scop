@@ -52,10 +52,11 @@ void onUpdate(Window<Scene> *win, Scene *data) {
     glfwGetWindowSize(win->window, &win->width, &win->height);    
     GLfloat aspectRatio = (GLfloat)win->width / (GLfloat)win->height;
 
-    // Matrix<4U, 4U, GLfloat> rotation = getRotation();
+    Matrix<4U, 4U, GLfloat> rotation = getRotation();
     Matrix<4U, 4U, GLfloat> projection = getProjection(win, aspectRatio);
 
-    VAO *vao = &data->listVAO[data->listVAO.size() - 1];
+    VAO *vao = data->listVAO[data->listVAO.size() - 1];
+    // vao->print();
 
     float minX = vao->vertices[0].x;
     float maxX = minX;
@@ -85,7 +86,7 @@ void onUpdate(Window<Scene> *win, Scene *data) {
     // data->camera.position = Vector3<GLfloat>(position[0], position[1], position[2] - 5.0f);
 
     // Transformation matrix
-    glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (projection * data->camera.getMatrix() * translation).data);
+    glUniformMatrix4fv(gWorldLocation, 1, GL_TRUE, (projection * data->camera.getMatrix() * rotation * translation).data);
 
     tex->bind(GL_TEXTURE0);
     glUniform1i(gSamplerLocation, 0);
@@ -104,16 +105,7 @@ void onUpdate(Window<Scene> *win, Scene *data) {
 
     vao->preDraw();
 
-        Matrix<4, 1, float> tmp;
-        tmp.data[0] = vao->vertices[0].x;
-        tmp.data[1] = vao->vertices[0].y;
-        tmp.data[2] = vao->vertices[0].z;
-        tmp.data[3] = 1;
-        std::cout << "kk = " << (projection * data->camera.getMatrix() * translation) * tmp << "\n";
-
     glDrawElements(GL_TRIANGLES, vao->indices.size(), GL_UNSIGNED_INT, 0);
-
-    std::cout << "test " << vao->vertices.size() << " et indices " << vao->indices.size() << "\n";
 
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
