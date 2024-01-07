@@ -108,18 +108,20 @@ void printVAO(Window<Scene> *win, Scene *data, unsigned int index) {
         texCoords.push_back(Vector2<GLfloat>((float)rand() / RAND_MAX, (float)rand() / RAND_MAX));
     }
 
+    vao->preDraw();
     // Bind CBO
     glBindBuffer(GL_ARRAY_BUFFER, vao->CBO);
     glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(Vector2<GLfloat>), texCoords.data(), GL_DYNAMIC_DRAW);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vector2<GLfloat>), nullptr);
     glEnableVertexAttribArray(1);
 
-    vao->preDraw();
 
     glDrawElements(GL_TRIANGLES, vao->indices.size(), GL_UNSIGNED_INT, 0);
 
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
+    // glDisableVertexAttribArray(0);
+    // glDisableVertexAttribArray(1);
+
+    vao->postDraw();
 }
 
 void onUpdate(Window<Scene> *win, Scene *data) {

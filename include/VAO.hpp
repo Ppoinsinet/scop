@@ -15,6 +15,7 @@ public:
     Vector3<GLfloat> position;
     float scale;
 
+    unsigned int index; // VAO index
     unsigned int CBO; // Colors buffer object
     unsigned int VBO; // Vertex buffer object
     unsigned int IBO; // Indices buffer object
@@ -41,6 +42,7 @@ public:
         CBO = ref.CBO;
         VBO = ref.VBO;
         IBO = ref.IBO;
+        index = ref.index;
     }
 
     VAO(const ObjParser &data) {
@@ -76,6 +78,7 @@ public:
         CBO = ref.CBO;
         VBO = ref.VBO;
         IBO = ref.IBO;
+        index = ref.index;
         return *this;
     }
 
@@ -83,9 +86,12 @@ public:
         glGenBuffers(1, &CBO);
         glGenBuffers(1, &VBO);
         glGenBuffers(1, &IBO);
+        glGenVertexArrays(1, &index);
     }
 
     void preDraw() {
+
+        glBindVertexArray(index);
         // Bind CBO
         // glBindBuffer(GL_ARRAY_BUFFER, CBO);
         // glBufferData(GL_ARRAY_BUFFER, texCoords.size() * sizeof(Vector2<GLfloat>), texCoords.data(), GL_DYNAMIC_DRAW);
@@ -103,9 +109,15 @@ public:
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
     }
 
+    void postDraw() {
+        glBindVertexArray(0);
+    }
+
     ~VAO() {
+        std::cout << "VAO destructor\n";
         glDeleteBuffers(1, &CBO);
         glDeleteBuffers(1, &VBO);
+        glDeleteBuffers(1, &index);
     }
 
     void getTextureCoords() {
